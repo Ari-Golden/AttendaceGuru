@@ -65,3 +65,12 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 # AttendaceGuru
+
+aplikasi absensi menggunakan laravel 11
+## Cara installasi
+1. Clone repository ini
+2. Jalankan perintah `composer install`
+3. Jalankan perintah `php artisan key:generate`
+4. Jalankan perintah `php artisan migrate`
+5. Jalankan perintah `php artisan db:seed`
+6. Jalankan perintah `php artisan serve`
