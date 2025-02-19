@@ -84,26 +84,56 @@ class ShiftScheduleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ShiftSchedule $shiftSchedule)
+    public function edit($id)
     {
-        //
+        // Ambil data shift schedule berdasarkan ID
+        $shiftSchedule = DB::table('shift_schedules')
+            ->join('users', 'shift_schedules.id_guru', '=', 'users.id_guru')
+            ->join('shift_codes', 'shift_schedules.shift_code', '=', 'shift_codes.id')
+            ->select(
+                'shift_schedules.*',
+                'users.name as nama_guru',
+                'shift_codes.note as shift_note',
+                'shift_codes.jam_masuk',
+                'shift_codes.jam_pulang'
+            )
+            ->where('shift_schedules.id', $id)
+            ->first();
+
+        // Cek apakah data ditemukan
+        if (!$shiftSchedule) {
+            return redirect()->back()->with('error', 'Shift Schedule tidak ditemukan!');
+        }
+
+        // Ambil semua shift code untuk dropdown
+        $shiftCodes = ShiftCode::select('id', 'note')->get();
+
+
+        return view('schedule.edit', compact('shiftSchedule', 'shiftCodes'));
     }
+
 
     /**
-     * Update the specified resource in storage.
+     * Memperbarui shift schedule di database.
      */
-    public function update(Request $request, ShiftSchedule $shiftSchedule)
+    public function update(Request $request, $id)
     {
+        // Validasi input
         $request->validate([
-            'id_guru' => 'required|exists:users,id',
-            'shift_code' => 'required|exists:shift_codes,id',
+            'shift_code' => 'required|exists:shift_codes,code', // Pastikan shift_code ada di tabel shift_codes
         ]);
 
-        $shiftSchedule->update($request->all());
+        // Ambil data shift yang akan diperbarui
+        $shiftSchedule = ShiftSchedule::findOrFail($id);
 
-        return response()->json($shiftSchedule);
+        // Update shift_code
+        $shiftSchedule->update([
+            'shift_code' => $request->shift_code,
+        ]);
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('shift-schedule.edit', $id)->with('success', 'Shift schedule berhasil diperbarui.');
     }
-
     /**
      * Remove the specified resource from storage.
      */

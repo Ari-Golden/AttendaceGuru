@@ -53,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/shift-code/{shiftCode}', [ShiftCodeController::class, 'destroy'])
         ->name('shift-code.destroy')
         ->middleware('role:admin');
-        // Halaman Absensi (hanya untuk admin)
+    // Halaman Absensi (hanya untuk admin)
     Route::get('/shift-schedule', [ShiftScheduleController::class, 'index'])
         ->name('shift-schedule.index')
         ->middleware('role:admin');
@@ -71,6 +71,22 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('role:admin');
     Route::delete('/shift-schedule/{shiftSchedule}', [ShiftScheduleController::class, 'destroy'])
         ->name('shift-schedule.destroy')
+        ->middleware('role:admin');
+
+    // Halaman untuk memberikan reword kepada guru
+    Route::get('/reward', [AbsensiController::class, 'reward'])
+        ->name('reward')
+        ->middleware('role:admin');
+
+    Route::get('/create-reward', function () {
+        return view('welcome');
+    })->name('create-reward')
+        ->middleware('role:admin');
+    Route::post('/reward', [AbsensiController::class, 'rewardStore'])
+        ->name('reward.store')
+        ->middleware('role:admin');
+    Route::get('/reward/{id}/edit', [AbsensiController::class, 'rewardEdit'])
+        ->name('reward.edit')
         ->middleware('role:admin');
 });
 

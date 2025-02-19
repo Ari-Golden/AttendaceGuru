@@ -18,7 +18,20 @@ class AbsensiController extends Controller
         // Query dasar menggunakan Query Builder
         $query = DB::table('absensis') // Tabel absensi
             ->join('users', 'absensis.guru_id', '=', 'users.id') // Join dengan tabel users
-            ->select('absensis.*', 'users.name as nama_guru', 'users.id as id_user','users.id_guru as id_guru','users.program_studi as mapel'); // Pilih kolom yang diperlukan
+            ->select('absensis.*', 'users.name as nama_guru', 'users.id as id_user', 'users.id_guru as id_guru', 'users.program_studi as mapel'); // Pilih kolom yang diperlukan
+
+        // schedule absensi
+        $schedules = DB::table('shift_schedules')
+            ->join('users', 'shift_schedules.id_guru', '=', 'users.id_guru')
+            ->join('shift_codes', 'shift_schedules.shift_code', '=', 'shift_codes.id')
+            ->select(
+                'shift_schedules.*',
+                'users.name as nama_guru',
+                'shift_codes.note as shift_note',
+                'shift_codes.jam_masuk',
+                'shift_codes.jam_pulang'
+            )
+            ->get();
 
         // Filter berdasarkan status
         if ($request->has('status') && !empty($request->status) && $request->status !== 'semua') {
@@ -33,8 +46,60 @@ class AbsensiController extends Controller
         // Paginate hasil query
         $absensi = $query->paginate(10);
 
-        return view('dashboard', compact('absensi'));
+
+        return view('dashboard', compact('absensi', 'schedules'));
     }
+
+    public function reward(Request $request)
+    {
+        // Query dasar menggunakan Query Builder
+        $query = DB::table('absensis')
+            ->join('users', 'absensis.guru_id', '=', 'users.id')
+            ->select(
+                'users.name as nama_guru',
+                'users.id as id_user',
+                'users.id_guru as id_guru',
+                'users.program_studi as mapel',
+                DB::raw('MAX(absensis.tgl_absen) as tgl_absen'),
+                DB::raw('MAX(CASE WHEN absensis.status = "Masuk" THEN absensis.jam_absen END) as jam_masuk'),
+                DB::raw('MAX(CASE WHEN absensis.status = "pulang" THEN absensis.jam_absen END) as jam_pulang')
+            )
+            ->groupBy('users.id_guru', 'users.name', 'users.id', 'users.program_studi');
+
+        // schedule absensi
+        $schedules = DB::table('shift_schedules')
+            ->join('users', 'shift_schedules.id_guru', '=', 'users.id_guru')
+            ->join('shift_codes', 'shift_schedules.shift_code', '=', 'shift_codes.id')
+            ->select(
+                'shift_schedules.*',
+                'users.name as nama_guru',
+                'shift_codes.note as shift_note',
+                'shift_codes.jam_masuk',
+                'shift_codes.jam_pulang'
+            )
+            ->first();
+
+        // Filter berdasarkan status
+        if ($request->has('status') && !empty($request->status) && $request->status !== 'semua') {
+            $query->where('absensis.status', $request->status);
+        }
+
+        // Filter berdasarkan tanggal absen
+        if ($request->has('tgl_absen') && !empty($request->tgl_absen)) {
+            $query->whereDate('absensis.tgl_absen', '=', $request->tgl_absen);
+        }
+
+        // Pencarian berdasarkan nama guru
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('users.name', 'like', '%' . $request->search . '%');
+        }
+
+        // Paginate hasil query
+        $rewards = $query->paginate(10);
+
+        return view('reward.index', compact('rewards', 'schedules'));
+    }
+
 
     /**
      * Show the form for creating a new resource.
