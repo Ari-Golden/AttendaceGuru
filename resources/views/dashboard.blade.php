@@ -8,7 +8,8 @@
             <!-- Filter -->
             <div class="flex items-center">
                 <label for="statusFilter" class="mr-2 text-sm font-medium">Filter Status:</label>
-                <select id="statusFilter" class="px-3 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
+                <select id="statusFilter"
+                    class="px-3 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
                     <option value="">Semua</option>
                     <option value="masuk">Masuk</option>
                     <option value="pulang">Pulang</option>
@@ -16,7 +17,7 @@
             </div>
             <!-- Pencarian -->
             <div class="relative w-full md:w-1/3">
-                <input type="text" id="searchInput" placeholder="Cari nama guru..."
+                <input type="text" id="searchInput" placeholder="Cari data absen..."
                     class="w-full px-3 py-1 pl-8 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
                 <svg xmlns="http://www.w3.org/2000/svg"
                     class="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-2 top-1/2" fill="none"
@@ -25,6 +26,26 @@
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const searchInput = document.getElementById('searchInput');
+                    const tableRows = document.querySelectorAll('tbody tr');
+
+                    searchInput.addEventListener('input', function() {
+                        const searchTerm = searchInput.value.toLowerCase();
+
+                        tableRows.forEach(row => {
+                            const rowText = row.textContent.toLowerCase();
+                            if (rowText.includes(searchTerm)) {
+                                row.style.display = '';
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        });
+                    });
+                });
+            </script>
         </div>
 
         <!-- Tabel Data Absensi -->
@@ -51,7 +72,8 @@
                             <td class="hidden px-3 py-2 md:table-cell">{{ $item->id_guru }}</td>
                             <td class="hidden px-3 py-2 md:table-cell">{{ $item->mapel }}</td>
                             <td class="px-3 py-2">
-                                <span class="{{ $item->status === 'masuk' ? 'text-green-600' : 'text-red-600' }} font-medium">
+                                <span
+                                    class="{{ $item->status === 'masuk' ? 'text-green-600' : 'text-red-600' }} font-medium">
                                     {{ ucfirst($item->status) }}
                                 </span>
                             </td>

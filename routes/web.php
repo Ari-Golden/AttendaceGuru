@@ -4,6 +4,7 @@ use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShiftCodeController;
 use App\Http\Controllers\ShiftScheduleController;
+use App\Http\Controllers\userController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -11,10 +12,24 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    // Halaman Dashboard Guru (hanya untuk admin)
+    // Halaman Dashboard (hanya untuk admin)
     Route::get('/dashboard', [AbsensiController::class, 'index'])
         ->name('dashboard')
         ->middleware('role:admin');
+    // halaman data users
+    Route::get('/users', [userController::class, 'index'])
+        ->name('users.index')
+        ->middleware('role:admin');
+    Route::get('/users/{id}/edit', [AbsensiController::class, 'edit'])
+        ->name('users.edit')
+        ->middleware('role:admin');
+    Route::patch('/users/{id}', [AbsensiController::class, 'update'])
+        ->name('users.update')
+        ->middleware('role:admin');
+    Route::delete('/users/{id}', [AbsensiController::class, 'destroy'])
+        ->name('users.destroy')
+        ->middleware('role:admin');
+    // Halaman Shift Schedule (hanya untuk admin)
     Route::get('/shift-schedules', [ShiftScheduleController::class, 'index'])
         ->name('shift-schedules.index')
         ->middleware('role:admin');
@@ -77,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reward', [AbsensiController::class, 'reward'])
         ->name('reward')
         ->middleware('role:admin');
+    
 
     Route::get('/create-reward', function () {
         return view('welcome');
