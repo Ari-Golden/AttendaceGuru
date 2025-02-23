@@ -9,7 +9,7 @@
 </head>
 
 <body class="bg-blue-50">
-    <header class="fixed top-0 left-0 z-50 w-full py-4 shadow-md bg-sky-800">
+    <header class="fixed top-0 left-0 z-50 hidden w-full py-4 shadow-md bg-sky-800 lg:block">
         <div class="container flex items-center justify-between mx-auto">
             <div class="flex items-center">
                 <img src="{{ asset('images/Logo300.png') }}" alt="AttendanceGuru Logo" class="w-12 h-auto mr-3">
@@ -56,13 +56,14 @@
                 process.</p>
             <p class="mb-6 text-lg text-center text-gray-700">Get started now!</p>
 
-            <a href="{{ route('login') }}" <div class="flex justify-center">
+            <a href="{{ route('login') }}" class="flex justify-center">
                 <a href="/login"
                     class="px-4 py-2 text-white transition duration-300 bg-blue-600 rounded-lg hover:bg-blue-700">Login</a>
                 <a href="/register"
                     class="px-4 py-2 ml-4 text-white transition duration-300 bg-yellow-500 rounded-lg hover:bg-yellow-600">Register</a>
-            <p class="mt-8 text-sm text-gray-600">© 2025 AttendanceGuru. All rights reserved DEVELOPMENT BY PT GOLDEN
-                NATIONAL LECACY.</p>
+                <p class="mt-8 text-sm text-gray-600">© 2025 AttendanceGuru. All rights reserved DEVELOPMENT BY PT
+                    GOLDEN
+                    NATIONAL LECACY.</p>
         </div>
     </div>
     </div>

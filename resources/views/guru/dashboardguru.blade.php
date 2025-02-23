@@ -1,8 +1,8 @@
-@extends('layouts.guru')
+@extends('layouts.attendance')
 @section('content')
     <div class="max-w-md p-6 mx-auto bg-white rounded shadow-md">
         <h2 class="mb-4 text-xl font-bold">Absensi Guru</h2>
-        <form method="POST" action="{{ route('guru.attendance.store') }}" enctype="multipart/form-data" class="space-y-4">
+        <form method="POST" action="{{ route('attendance.store') }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
             <!-- Nama Guru -->
             <div>

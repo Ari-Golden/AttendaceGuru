@@ -14,30 +14,11 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-black hover:text-gray-500">
-                        {{ __('Absence') }}
+                    <x-nav-link :href="route('guru.dashboard')" :active="request()->routeIs('guru.dashboard')" class="text-white hover:text-gray-200">
+                        {{ __('Attendance Guru') }}
                     </x-nav-link>
                 </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('reward')" :active="request()->routeIs('reward')" class="text-white hover:text-gray-200">
-                        {{ __('Reward') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')" class="text-white hover:text-gray-200">
-                        {{ __('Users') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('shift-code.index')" :active="request()->routeIs('shift-code.index')" class="text-white hover:text-gray-200">
-                        {{ __('Shift') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('shift-schedules.index')" :active="request()->routeIs('shift-schedules.index')" class="text-white hover:text-gray-200">
-                        {{ __('jadwal Shift') }}
-                    </x-nav-link>
-                </div>
+
             </div>
 
             <!-- Settings Dropdown -->
@@ -97,30 +78,10 @@
 
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-black hover:text-gray-500">
-                {{ __('Absence') }}
-            </x-responsive-nav-link>
-        </div>
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('reward')" :active="request()->routeIs('reward')" class="text-black hover:text-gray-500">
-                {{ __('Reward') }}
-            </x-responsive-nav-link>
-        </div>
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')" class="text-black hover:text-gray-500">
-                {{ __('Users') }}
-            </x-responsive-nav-link>
-        </div>
 
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('shift-code.index')" :active="request()->routeIs('shift-code.index')" class="text-black hover:text-gray-500">
-                {{ __('Shift') }}
-            </x-responsive-nav-link>
-        </div>
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('shift-schedules.index')" :active="request()->routeIs('shift-schedules.index')" class="text-black hover:text-gray-500">
-                {{ __('jadwal Shift') }}
+            <x-responsive-nav-link :href="route('guru.dashboard')" :active="request()->routeIs('guru.dashboard')" class="text-black hover:text-gray-500">
+                {{ __('Attendance Guru') }}
             </x-responsive-nav-link>
         </div>
 
@@ -133,7 +94,7 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')" class="text-black hover:text-gray-500">
+                <x-responsive-nav-link :href="route('profile.edit')" class="text-white hover:text-gray-200">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
@@ -144,7 +105,7 @@
                     <x-responsive-nav-link :href="route('logout')"
                         onclick="event.preventDefault();
                                         this.closest('form').submit();"
-                        class="text-black hover:text-gray-500">
+                        class="text-white hover:text-gray-200">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
                 </form>

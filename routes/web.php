@@ -52,7 +52,7 @@ Route::middleware(['auth'])->group(function () {
     // Halaman Shift Code (hanya untuk admin)
     Route::get('/shift-code', [ShiftCodeController::class, 'index'])
         ->name('shift-code.index')
-        ->middleware('role:admin');
+        ->middleware('role:admin|guru');
     Route::post('/shift-code', [ShiftCodeController::class, 'store'])
         ->name('shift-code.store')
         ->middleware('role:admin');
@@ -71,7 +71,7 @@ Route::middleware(['auth'])->group(function () {
     // Halaman Absensi (hanya untuk admin)
     Route::get('/shift-schedule', [ShiftScheduleController::class, 'index'])
         ->name('shift-schedule.index')
-        ->middleware('role:admin');
+        ->middleware('role:admin|guru');
     Route::get('/shift-schedule/create', [ShiftScheduleController::class, 'create'])
         ->name('shift-schedule.create')
         ->middleware('role:admin');
@@ -92,7 +92,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reward', [AbsensiController::class, 'reward'])
         ->name('reward')
         ->middleware('role:admin');
-    
+
 
     Route::get('/create-reward', function () {
         return view('welcome');
@@ -117,8 +117,12 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/guru', function () {
         return view('guru.dashboardguru');
-    })->middleware('role:guru|admin');
-    Route::post('/guru/attendance', [AbsensiController::class, 'store'])->name('guru.attendance.store');
+    })
+        ->middleware('role:guru|admin')
+        ->name('guru.dashboard');
+    Route::post('/attendance', [AbsensiController::class, 'store'])
+        ->name('attendance.store')
+        ->middleware('role:guru|admin');
 });
 
 require __DIR__ . '/auth.php';

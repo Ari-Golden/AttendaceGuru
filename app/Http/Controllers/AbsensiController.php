@@ -178,6 +178,16 @@ class AbsensiController extends Controller
             'jam_absen' => 'required|date_format:H:i:s', // Jam absen harus valid (HH:MM:SS)
         ]);
 
+        // Cek apakah sudah ada absensi masuk atau pulang pada tanggal yang sama
+        $existingAbsensi = Absensi::where('guru_id', Auth::id())
+            ->where('tgl_absen', $request->tgl_absen)
+            ->where('status', $request->status)
+            ->first();
+
+        if ($existingAbsensi) {
+            return redirect()->back()->withErrors(['error' => 'Anda sudah melakukan absensi ' . $request->status . ' pada tanggal ini.']);
+        }
+
         try {
             // Simpan data absensi ke database
             Absensi::create([

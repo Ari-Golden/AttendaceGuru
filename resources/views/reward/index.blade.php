@@ -43,6 +43,52 @@
             </div>
         @endif
         <div class="overflow-x-auto">
+            <div class="flex mb-4 space-x-4">
+                <button onclick="downloadExcel()"
+                    class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600">Download Excel</button>
+                <button onclick="downloadPDF()" class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">Download
+                    PDF</button>
+            </div>
+            <script>
+                async function downloadPDF() {
+                    const {
+                        jsPDF
+                    } = window.jspdf;
+                    const table = document.querySelector('table');
+                    const rows = Array.from(table.rows);
+                    let pdfContent = '';
+
+                    rows.forEach(row => {
+                        const cols = Array.from(row.cells).map(cell => cell.innerText);
+                        pdfContent += cols.join(" ") + "\n";
+                    });
+
+                    const doc = new jsPDF();
+                    doc.text(pdfContent, 10, 10);
+                    doc.save('reward_data.pdf');
+                }
+            </script>
+
+            <script>
+                function downloadExcel() {
+                    const table = document.querySelector('table');
+                    const rows = Array.from(table.rows);
+                    let csvContent = "data:text/csv;charset=utf-8,";
+
+                    rows.forEach(row => {
+                        const cols = Array.from(row.cells).map(cell => cell.innerText);
+                        csvContent += cols.join(",") + "\r\n";
+                    });
+
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", "reward_data.csv");
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            </script>
             <div class="mb-4">
                 <input type="text" id="searchInput" onkeyup="searchData()"
                     placeholder="Search by Nama, ID Guru, or Tanggal Absen"
