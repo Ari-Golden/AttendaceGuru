@@ -14,13 +14,13 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-black hover:text-gray-500">
-                        {{ __('Absence') }}
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-white hover:text-gray-200">
+                        {{ __('List Absen') }}
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('reward')" :active="request()->routeIs('reward')" class="text-white hover:text-gray-200">
-                        {{ __('Reward') }}
+                        {{ __('Tunj Transport') }}
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
@@ -35,7 +35,12 @@
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('shift-schedules.index')" :active="request()->routeIs('shift-schedules.index')" class="text-white hover:text-gray-200">
-                        {{ __('jadwal Shift') }}
+                        {{ __('Jadwal Shift Guru') }}
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('attendance-location.index')" :active="request()->routeIs('attendance-location.index')" class="text-white hover:text-gray-200">
+                        {{ __('Tikor Absensi') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -120,7 +125,12 @@
         </div>
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('shift-schedules.index')" :active="request()->routeIs('shift-schedules.index')" class="text-black hover:text-gray-500">
-                {{ __('jadwal Shift') }}
+                {{ __('Jadwal Shift Guru') }}
+            </x-responsive-nav-link>
+        </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('attendance-location.index')" :active="request()->routeIs('attendance-location.index')" class="text-black hover:text-gray-500">
+                {{ __('Tikor Absensi') }}
             </x-responsive-nav-link>
         </div>
 

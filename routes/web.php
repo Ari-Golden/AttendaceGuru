@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\AttendanceLocationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShiftCodeController;
 use App\Http\Controllers\ShiftScheduleController;
 use App\Http\Controllers\userController;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -16,6 +19,47 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [AbsensiController::class, 'index'])
         ->name('dashboard')
         ->middleware('role:admin');
+
+    // Halaman lokasi Absen
+
+
+    // Tampilkan daftar lokasi
+    Route::get('/attendance-locations', [AttendanceLocationController::class, 'index'])
+        ->name('attendance-location.index')
+        ->middleware('role:admin');
+
+    // Form tambah lokasi
+    Route::get('/attendance-location/create', [AttendanceLocationController::class, 'create'])
+        ->name('attendance-location.create')
+        ->middleware('role:admin');
+
+    // Simpan lokasi baru
+    Route::post('/attendance-location', [AttendanceLocationController::class, 'store'])
+        ->name('attendance-location.store')
+        ->middleware('role:admin');
+
+    // Tampilkan detail lokasi
+    Route::get('/attendance-location/{locationAttendance}', [AttendanceLocationController::class, 'show'])
+        ->name('attendance-location.show')
+        ->middleware('role:admin');
+
+    // Form edit lokasi
+    Route::get('/attendance-location/{locationAttendance}/edit', [AttendanceLocationController::class, 'edit'])
+        ->name('attendance-location.edit')
+        ->middleware('role:admin');
+
+    // Update lokasi
+    Route::put('/attendance-location/{locationAttendance}', [AttendanceLocationController::class, 'update'])
+        ->name('attendance-location.update')
+        ->middleware('role:admin');
+
+    // Hapus lokasi
+    Route::delete('/attendance-location/{locationAttendance}', [AttendanceLocationController::class, 'destroy'])
+        ->name('attendance-location.destroy')
+        ->middleware('role:admin');
+
+
+
     // halaman data users
     Route::get('/users', [userController::class, 'index'])
         ->name('users.index')
@@ -116,10 +160,22 @@ Route::middleware('auth')->group(function () {
 // Halaman Dashboard Guru
 Route::middleware('auth')->group(function () {
     Route::get('/guru', function () {
-        return view('guru.dashboardguru');
+        return view('guru.dashboardguru', ['title' => 'Dashboard Guru'], ['user' => User::find(Auth::user()->id)]);
     })
         ->middleware('role:guru|admin')
         ->name('guru.dashboard');
+    Route::get('/attendanceview', function () {
+        return view('guru.absensi', ['title' => 'Attendance Guru'], ['user' => User::find(Auth::user()->id)]);
+    })
+        ->middleware('role:guru|admin')
+        ->name('attendanceview');
+    Route::get('/attendancePkl', function () {
+        return view('guru.absensiPkl', ['title' => 'Attendance PKL'], ['user' => User::find(Auth::user()->id)]);
+    })
+        ->middleware('role:guru|admin')
+        ->name('attendancePkl');
+
+
     Route::post('/attendance', [AbsensiController::class, 'store'])
         ->name('attendance.store')
         ->middleware('role:guru|admin');

@@ -7,7 +7,7 @@
             <div class="flex h-16">
                 <!-- Logo -->
                 <div class="flex items-center shrink-0">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('guru.dashboard') }}">
                         <img src="{{ asset('images/logo150.png') }}" alt="Logo" class="w-auto h-12" />
                     </a>
                 </div>
@@ -15,7 +15,7 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('guru.dashboard')" :active="request()->routeIs('guru.dashboard')" class="text-white hover:text-gray-200">
-                        {{ __('Attendance Guru') }}
+                        {{ __('Home') }}
                     </x-nav-link>
                 </div>
 
@@ -62,6 +62,10 @@
 
             <!-- Hamburger -->
             <div class="flex items-center -me-2 sm:hidden">
+                <div class="text-sm font-medium text-white ml-4">
+                    <span class="text-white">{{ Auth::user()->name }}
+                    </span>
+                </div>
                 <button @click="open = ! open"
                     class="inline-flex items-center justify-center p-2 text-white transition duration-150 ease-in-out rounded-md dark:text-gray-500 hover:text-gray-200 dark:hover:text-gray-400 hover:bg-blue-700 dark:hover:bg-blue-900 focus:outline-none focus:bg-blue-700 dark:focus:bg-blue-900 focus:text-gray-200 dark:focus:text-gray-400">
                     <svg class="w-6 h-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -81,7 +85,7 @@
 
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('guru.dashboard')" :active="request()->routeIs('guru.dashboard')" class="text-black hover:text-gray-500">
-                {{ __('Attendance Guru') }}
+                {{ __('Home') }}
             </x-responsive-nav-link>
         </div>
 

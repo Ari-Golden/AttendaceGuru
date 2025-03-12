@@ -13,6 +13,15 @@ class AbsensiController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+     public function settingLocation(Request $request)     
+     {
+        
+        
+
+     }
+
+
     public function index(Request $request)
     {
         // Query dasar menggunakan Query Builder

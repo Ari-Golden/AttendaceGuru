@@ -1,7 +1,7 @@
 @extends('layouts.attendance')
 @section('content')
-    <div class="Flex max-w-md mt-10 p-6 mx-auto bg-white rounded shadow-md">
-        <h2 class="mb-4 text-xl font-bold">Absensi Guru</h2>
+    <div class="flex flex-col mt-10 max-w-md p-6 mx-auto bg-white rounded shadow-md">
+        <h2 class="mb-4 text-xl font-bold">Absensi Monitoring PKL</h2>
         <form method="POST" action="{{ route('attendance.store') }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
             <!-- Nama Guru -->
