@@ -14,8 +14,30 @@ class AttendanceLocationController extends Controller
     {
 
        $locations = LocationAttendance::all();
-        return view('location.index',compact('locations'));
+       $tikorSekolah = LocationAttendance::where('id', 2)
+       ->select('radius')
+       ->first();
+        return view('location.index',compact('locations','tikorSekolah'));
     }
+
+    public function tikorSekolah()
+    {
+
+     
+       $tikorSekolah = LocationAttendance::all()->where('id', 2)->first();
+       
+        return view('guru.absensi',compact('tikorSekolah'));
+    }
+
+    public function tikorPkl()
+    {
+
+     
+       $tikorPkl = LocationAttendance::all();
+       
+        return view('guru.absensiPkl',compact('tikorPkl'));
+    }
+
 
     /**
      * Show the form for creating a new resource.

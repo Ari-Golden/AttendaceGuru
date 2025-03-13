@@ -66,7 +66,7 @@
                                            class="bg-yellow-500 text-white px-3 py-1 rounded">
                                             Edit
                                         </a>
-                                
+                                                
                                         <!-- Tombol Hapus -->
                                         <form action="{{ route('attendance-location.destroy', $location->id) }}" method="POST"
                                               onsubmit="return confirm('Apakah Anda yakin ingin menghapus lokasi ini?');">
@@ -78,7 +78,6 @@
                                         </form>
                                     </div>
                                 </td>
-                                
                             </tr>
                             @empty
                             <tr>
@@ -108,33 +107,34 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
-        @foreach($locations as $location)
-        let mapElement = document.getElementById('map-{{ $location->id }}');
-        if (mapElement) {
-            let map{{ $location->id }} = L.map(mapElement, {
-                attributionControl: false,
-                zoomControl: false,
-                dragging: false,
-                doubleClickZoom: false,
-                boxZoom: false,
-                scrollWheelZoom: false,
-                tap: false
-            }).setView([{{ $location->latitude }}, {{ $location->longitude }}], 15);
+        document.querySelectorAll('[id^="map-"]').forEach((mapElement) => {
+            const lat = parseFloat(mapElement.getAttribute('data-lat'));
+            const lng = parseFloat(mapElement.getAttribute('data-lng'));
+            const radius = parseFloat(mapElement.getAttribute('data-radius'));
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map{{ $location->id }});
+            if (!isNaN(lat) && !isNaN(lng) && !isNaN(radius)) {
+                let map = L.map(mapElement, {
+                    attributionControl: false,
+                    zoomControl: false,
+                    dragging: false,
+                    doubleClickZoom: false,
+                    boxZoom: false,
+                    scrollWheelZoom: false,
+                    tap: false
+                }).setView([lat, lng], 15);
 
-            L.marker([{{ $location->latitude }}, {{ $location->longitude }}]).addTo(map{{ $location->id }});
-
-            L.circle([{{ $location->latitude }}, {{ $location->longitude }}], {
-                color: '#3b82f6',
-                fillColor: '#60a5fa',
-                fillOpacity: 0.2,
-                radius: {{ $location->radius }}
-            }).addTo(map{{ $location->id }});
-        } else {
-            console.error("Element map-{{ $location->id }} tidak ditemukan");
-        }
-        @endforeach
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                L.marker([lat, lng]).addTo(map);
+                L.circle([lat, lng], {
+                    color: '#3b82f6',
+                    fillColor: '#60a5fa',
+                    fillOpacity: 0.2,
+                    radius: radius
+                }).addTo(map);
+            } else {
+                console.error("Koordinat tidak valid untuk elemen: ", mapElement);
+            }
+        });
     }, 500);
 });
 </script>

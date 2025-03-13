@@ -78,7 +78,8 @@
                                 </span>
                             </td>
                             <td class="px-3 py-2">
-                                <img src="{{ $item->foto_selfie }}" alt="Foto Absen" class="w-8 h-8 rounded-full">
+                            <img src="{{ asset('storage/' . $item->foto_selfie) }}" alt="Foto Absen" class="w-8 h-8 rounded-full">
+
                             </td>
                             <td class="hidden px-3 py-2 md:table-cell">
                                 {{ \Carbon\Carbon::parse($item->tgl_absen)->format('d/m/Y') }}

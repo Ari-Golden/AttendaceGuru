@@ -6,7 +6,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShiftCodeController;
 use App\Http\Controllers\ShiftScheduleController;
 use App\Http\Controllers\userController;
+use App\Models\LocationAttendance;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -164,20 +166,33 @@ Route::middleware('auth')->group(function () {
     })
         ->middleware('role:guru|admin')
         ->name('guru.dashboard');
-    Route::get('/attendanceview', function () {
-        return view('guru.absensi', ['title' => 'Attendance Guru'], ['user' => User::find(Auth::user()->id)]);
-    })
+    Route::get(
+        '/attendanceview',
+        [AttendanceLocationController::class, 'tikorSekolah']
+    )
         ->middleware('role:guru|admin')
         ->name('attendanceview');
-    Route::get('/attendancePkl', function () {
-        return view('guru.absensiPkl', ['title' => 'Attendance PKL'], ['user' => User::find(Auth::user()->id)]);
-    })
+    Route::get('/get-server-time', function () {
+        return response()->json([
+            'tanggal' => Carbon::now()->format('Y-m-d'),
+            'jam' => Carbon::now()->format('H:i:s'),
+        ]);
+    })->name('get.server.time');
+
+    Route::get(
+        '/attendancePkl',
+        [AttendanceLocationController::class, 'tikorPkl']
+    )
         ->middleware('role:guru|admin')
         ->name('attendancePkl');
 
-
     Route::post('/attendance', [AbsensiController::class, 'store'])
         ->name('attendance.store')
+        ->middleware('role:guru|admin');
+
+
+    Route::post('/attendancePkl', [AbsensiController::class, 'attendancePkl'])
+        ->name('attendancePkl.store')
         ->middleware('role:guru|admin');
 });
 

@@ -15,6 +15,9 @@ class Absensi extends Model
         'tgl_absen',
         'lokasi_absen',
         'status',
+        'latitude',
+        'longitude',
+        'report', // Tambahkan field ini
     ];
     public function guru()
     {
