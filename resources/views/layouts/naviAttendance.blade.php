@@ -97,10 +97,10 @@
                 <x-responsive-nav-link :href="route('guru.dashboard')" class="text-white hover:text-gray-200">
                     {{ __('Home') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('guru.abseni')" class="text-white hover:text-gray-200">
+                <x-responsive-nav-link :href="route('guru.absensi')" class="text-white hover:text-gray-200">
                     {{ __('Absen Harian') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('guru.abseniPkl')" class="text-white hover:text-gray-200">
+                <x-responsive-nav-link :href="route('guru.absensiPkl')" class="text-white hover:text-gray-200">
                     {{ __('Absen PKL') }}
                 </x-responsive-nav-link>
 
