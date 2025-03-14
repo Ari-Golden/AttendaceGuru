@@ -5,6 +5,7 @@ use App\Http\Controllers\AttendanceLocationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShiftCodeController;
 use App\Http\Controllers\ShiftScheduleController;
+use App\Http\Controllers\TunjTranspostController;
 use App\Http\Controllers\userController;
 use App\Models\LocationAttendance;
 use App\Models\User;
@@ -138,6 +139,24 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reward', [AbsensiController::class, 'reward'])
         ->name('reward')
         ->middleware('role:admin');
+    Route::get('/transport',[TunjTranspostController::class, 'index'])
+        ->name('transport.index')
+        ->middleware('role:admin');
+    Route::get('/transport/create',[TunjTranspostController::class, 'create'])
+        ->name('transport.create')
+        ->middleware('role:admin');
+    Route::post('/transport',[TunjTranspostController::class, 'store'])
+        ->name('transport.store')
+        ->middleware('role:admin');
+    Route::get('/transport/{id}/edit',[TunjTranspostController::class, 'edit'])
+        ->name('transport.edit')
+        ->middleware('role:admin');
+    Route::patch('/transport/{id}',[TunjTranspostController::class, 'update'])
+        ->name('transport.update')
+        ->middleware('role:admin');
+    Route::delete('/transport/{id}',[TunjTranspostController::class, 'destroy'])
+        ->name('transport.destroy')
+        ->middleware('role:admin');   
 
 
     Route::get('/create-reward', function () {
@@ -162,14 +181,10 @@ Route::middleware('auth')->group(function () {
 // Halaman Dashboard Guru
 Route::middleware('auth')->group(function () {
     Route::get('/guru', function () {
-        return view('guru.dashboardguru', ['title' => 'Dashboard Guru'], ['user' => User::find(Auth::user()->id)]);
-    })
+        return view('guru.dashboardguru', ['title' => 'Dashboard Guru'], ['user' => User::find(Auth::user()->id)]);})
         ->middleware('role:guru|admin')
         ->name('guru.dashboard');
-    Route::get(
-        '/attendanceview',
-        [AttendanceLocationController::class, 'tikorSekolah']
-    )
+    Route::get('/attendanceview',[AttendanceLocationController::class, 'tikorSekolah'])
         ->middleware('role:guru|admin')
         ->name('attendanceview');
     Route::get('/get-server-time', function () {
@@ -179,17 +194,13 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('get.server.time');
 
-    Route::get(
-        '/attendancePkl',
-        [AttendanceLocationController::class, 'tikorPkl']
-    )
+    Route::get('/attendancePkl',[AttendanceLocationController::class, 'tikorPkl'])
         ->middleware('role:guru|admin')
         ->name('attendancePkl');
 
     Route::post('/attendance', [AbsensiController::class, 'store'])
         ->name('attendance.store')
         ->middleware('role:guru|admin');
-
 
     Route::post('/attendancePkl', [AbsensiController::class, 'attendancePkl'])
         ->name('attendancePkl.store')

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Absensi;
 use App\Models\LocationAttendance;
+use App\Models\tunjTranspost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -61,6 +62,7 @@ class AbsensiController extends Controller
     // app/Http/Controllers/RewardController.php
     public function reward(Request $request)
     {
+        
         // Query dasar menggunakan Query Builder untuk data absensi
         $query = DB::table('absensis')
             ->join('users', 'absensis.guru_id', '=', 'users.id')
@@ -95,8 +97,11 @@ class AbsensiController extends Controller
             )
             ->first();
 
+            $amountTransport = TunjTranspost::where('id', 1)->value('amount');      
+
+
         // Uang transport
-        $transportAmount = 64000; // Uang transport tetap
+        $transportAmount = $amountTransport; // Uang transport tetap
 
         // Ambil data absensi guru
         $rewards = $query->get();
@@ -155,6 +160,9 @@ class AbsensiController extends Controller
     }
 
 
+   
+
+
     /**
      * Show the form for creating a new resource.
      */
@@ -166,30 +174,30 @@ class AbsensiController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    
-    
+
+
     public function attendancePkl(Request $request)
     {
 
-        
+
         // Ambil lokasi PKL berdasarkan ID yang dipilih
         $tikorPkl = LocationAttendance::find($request->tikor_pkl);
 
-       
-    
+
+
         if (!$tikorPkl) {
             return redirect()->back()->with('error', 'Titik Koordinat PKL tidak ditemukan.');
         }
-    
+
         // Ambil data lokasi dari Tikor PKL
         $latitudeTikor = round((float) $tikorPkl->latitude, 7);
         $longitudeTikor = round((float) $tikorPkl->longitude, 7);
         $radiusTikor = (float) $tikorPkl->radius;
-        
+
         $request->merge([
             'jam_absen' => str_replace('.', ':', $request->jam_absen), // Ubah format waktu
         ]);
-    
+
         // Validasi Input
         $request->validate([
             'foto_selfie' => ['required', 'string', function ($attribute, $value, $fail) {
@@ -203,70 +211,70 @@ class AbsensiController extends Controller
             'tgl_absen' => 'required|date',
             'jam_absen' => 'required|date_format:H:i:s',
             'description' => 'required|string',
-            'report'=> 'required|string',
+            'report' => 'required|string',
         ]);
-        
-    
+
+
         // Ambil lokasi user dari request dan dibulatkan agar akurat
         $latitudeUser = round((float) $request->latitude, 7);
         $longitudeUser = round((float) $request->longitude, 7);
-    
+
         // Hitung jarak antara lokasi user dengan Tikor PKL menggunakan Haversine Formula
         $earthRadius = 6371000; // Meter
         $dLat = deg2rad($latitudeUser - $latitudeTikor);
         $dLon = deg2rad($longitudeUser - $longitudeTikor);
-    
+
         $a = sin($dLat / 2) * sin($dLat / 2) +
             cos(deg2rad($latitudeTikor)) * cos(deg2rad($latitudeUser)) *
             sin($dLon / 2) * sin($dLon / 2);
-    
+
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
         $distance = $earthRadius * $c;
-    
+
         // Cek apakah user berada dalam radius yang ditentukan
         if ($distance > $radiusTikor) {
             return redirect()->back()->with('error', 'Absensi gagal! Anda berada di luar radius lokasi absensi.');
         }
-    
+
         // Cek apakah sudah absen hari ini
         $guruId = Auth::id();
-    
+
         $existingAbsensi = Absensi::where('guru_id', $guruId)
             ->where('tgl_absen', $request->tgl_absen)
             ->where('status', $request->status)
             ->exists(); // Menggunakan `exists()` lebih efisien
-    
+
         if ($existingAbsensi) {
             return redirect()->back()->with('error', 'Anda sudah melakukan absensi ' . $request->status . ' hari ini.');
         }
-    
+
         // Proses penyimpanan foto selfie (Base64 ke File)
         if (!$request->filled('foto_selfie')) {
             return back()->with('error', 'Foto selfie wajib diambil!');
         }
-    
+
         $image = $request->input('foto_selfie');
-    
+
         // Pastikan gambar dalam format Base64 yang valid
         if (preg_match('/^data:image\/(\w+);base64,/', $image, $matches)) {
             $image = substr($image, strpos($image, ',') + 1);
             $image = str_replace(' ', '+', $image);
             $imageFormat = strtolower($matches[1]); // Ekstensi gambar (png, jpg, dll.)
-    
+
             // Validasi format gambar yang diizinkan
             if (!in_array($imageFormat, ['jpg', 'jpeg', 'png'])) {
                 return back()->with('error', 'Format foto tidak didukung! Gunakan JPG atau PNG.');
             }
-    
+
             // Simpan gambar dengan nama unik
             $imageName = 'selfie_' . time() . '.' . $imageFormat;
             FacadesStorage::disk('public')->put('selfies/' . $imageName, base64_decode($image));
-    
+
             $fotoSelfiePath = 'selfies/' . $imageName; // Path yang disimpan di database
         } else {
             return back()->with('error', 'Foto selfie tidak valid!');
         }
-    
+
         // Simpan data absensi ke database
         Absensi::create([
             'guru_id' => $guruId, // ID guru yang sedang login
@@ -279,10 +287,10 @@ class AbsensiController extends Controller
             'lokasi_absen' => $request->description,
             'report' => $request->report, // Bisa diisi sesuai kebutuhan
         ]);
-    
+
         return redirect()->route('guru.dashboard')->with('success', 'Absensi berhasil disimpan.');
     }
-    
+
 
 
 
@@ -361,7 +369,7 @@ class AbsensiController extends Controller
 
         $latitude = round($request->latitude, 7);
         $longitude = round($request->longitude, 7);
-        
+
 
 
         // Simpan data absensi

@@ -19,8 +19,13 @@
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('transport.index')" :active="request()->routeIs('transport.index')" class="text-white hover:text-gray-200">
+                        {{ __('Tunjangan Transport') }}
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('reward')" :active="request()->routeIs('reward')" class="text-white hover:text-gray-200">
-                        {{ __('Tunj Transport') }}
+                        {{ __('List Transport Guru') }}
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
@@ -108,8 +113,13 @@
             </x-responsive-nav-link>
         </div>
         <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('transport.index')" :active="request()->routeIs('transport.index')" class="text-black hover:text-gray-500">
+                {{ __('Transport Allowance') }}
+            </x-responsive-nav-link>
+        </div>
+        <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('reward')" :active="request()->routeIs('reward')" class="text-black hover:text-gray-500">
-                {{ __('Reward') }}
+                {{ __('Transport Reward') }}
             </x-responsive-nav-link>
         </div>
         <div class="pt-2 pb-3 space-y-1">
