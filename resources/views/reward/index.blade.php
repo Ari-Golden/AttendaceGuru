@@ -47,8 +47,11 @@
         <div class="flex mb-4 space-x-4">
             <button onclick="downloadExcel()"
                 class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600">Download Excel</button>
-            <button onclick="downloadPDF()" class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">Download
-                PDF</button>
+            <!-- <button onclick="downloadPDF()" class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">Download
+                PDF</button> -->
+                <button class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">
+                    <a href="{{ route('reportTunjanganPdf') }}">view PDF</a>
+                </button>
         </div>
         <script>
             async function downloadPDF() {

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AttendanceLocationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\reportController;
 use App\Http\Controllers\ShiftCodeController;
 use App\Http\Controllers\ShiftScheduleController;
 use App\Http\Controllers\TunjTranspostController;
@@ -139,6 +140,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reward', [AbsensiController::class, 'reward'])
         ->name('reward')
         ->middleware('role:admin');
+    
+    
+    Route::get('/reportTunjangan/pdf',[reportController::class,'index'])
+        ->name('reportTunjanganPdf')
+        ->middleware('role:admin');
+
+    Route::get('/reportTunjangan/excel',[reportController::class,'exportExcel'])
+        ->name('reportTunjanganExcel')
+        ->middleware('role:admin');
+
+
+
     Route::get('/transport',[TunjTranspostController::class, 'index'])
         ->name('transport.index')
         ->middleware('role:admin');
