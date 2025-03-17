@@ -48,6 +48,21 @@
                         {{ __('Tikor Absensi') }}
                     </x-nav-link>
                 </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('attendanceview')" :active="request()->routeIs('attendanceview')" class="text-white
+                        hover:text-gray-200">
+                        {{ __('Absen Harian') }}
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('attendancePkl')" :active="request()->routeIs('attendanceview')" class="text-white
+                        hover:text-gray-200">
+                        {{ __('Absen PKL') }}
+                    </x-nav-link>
+                </div>
+
+
+               
             </div>
 
             <!-- Settings Dropdown -->
@@ -108,41 +123,52 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-black hover:text-gray-500">
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-white hover:text-gray-500">
                 {{ __('Absence') }}
             </x-responsive-nav-link>
         </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('transport.index')" :active="request()->routeIs('transport.index')" class="text-black hover:text-gray-500">
+            <x-responsive-nav-link :href="route('transport.index')" :active="request()->routeIs('transport.index')" class="text-white hover:text-gray-500">
                 {{ __('Transport Allowance') }}
             </x-responsive-nav-link>
         </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('reward')" :active="request()->routeIs('reward')" class="text-black hover:text-gray-500">
+            <x-responsive-nav-link :href="route('reward')" :active="request()->routeIs('reward')" class="text-white hover:text-gray-500">
                 {{ __('Transport Reward') }}
             </x-responsive-nav-link>
         </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')" class="text-black hover:text-gray-500">
+            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')" class="text-white hover:text-gray-500">
                 {{ __('Users') }}
             </x-responsive-nav-link>
         </div>
 
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('shift-code.index')" :active="request()->routeIs('shift-code.index')" class="text-black hover:text-gray-500">
+            <x-responsive-nav-link :href="route('shift-code.index')" :active="request()->routeIs('shift-code.index')" class="text-white hover:text-gray-500">
                 {{ __('Shift') }}
             </x-responsive-nav-link>
         </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('shift-schedules.index')" :active="request()->routeIs('shift-schedules.index')" class="text-black hover:text-gray-500">
+            <x-responsive-nav-link :href="route('shift-schedules.index')" :active="request()->routeIs('shift-schedules.index')" class="text-white hover:text-gray-500">
                 {{ __('Jadwal Shift Guru') }}
             </x-responsive-nav-link>
         </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('attendance-location.index')" :active="request()->routeIs('attendance-location.index')" class="text-black hover:text-gray-500">
+            <x-responsive-nav-link :href="route('attendance-location.index')" :active="request()->routeIs('attendance-location.index')" class="text-white hover:text-gray-500">
                 {{ __('Tikor Absensi') }}
             </x-responsive-nav-link>
         </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('attendanceview')" :active="request()->routeIs('attendanceview')" class="text-white hover:text-gray-500">
+                {{ __('Absen Harian') }}
+            </x-responsive-nav-link>
+        </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('attendancePkl')" :active="request()->routeIs('attendancePkl')" class="text-white hover:text-gray-500">
+                {{ __('Absen PKL') }}
+            </x-responsive-nav-link>
+        </div>
+
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-blue-700 dark:border-blue-600">
@@ -153,7 +179,7 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')" class="text-black hover:text-gray-500">
+                <x-responsive-nav-link :href="route('profile.edit')" class="text-white hover:text-gray-500">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
@@ -164,7 +190,7 @@
                     <x-responsive-nav-link :href="route('logout')"
                         onclick="event.preventDefault();
                                         this.closest('form').submit();"
-                        class="text-black hover:text-gray-500">
+                        class="text-white hover:text-gray-500">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
                 </form>

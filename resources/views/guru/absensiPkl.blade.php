@@ -53,7 +53,9 @@
         <!-- ID Guru -->
         <div>
             <label for="id_guru" class="block text-sm font-medium text-gray-700">ID Guru</label>
-            <input type="text" id="id_guru" name="id_guru" value="{{ Auth::user()->id }}" readonly class="block w-full mt-1 bg-gray-100 border-gray-300 rounded-md cursor-not-allowed">
+            <input type="hidden" id="id_guru" name="id_guru" value="{{ Auth::user()->id }}" readonly class="block w-full mt-1 bg-gray-100 border-gray-300 rounded-md cursor-not-allowed">
+            <input type="text" id="id_guru1" name="id_guru1" value="{{ Auth::user()->id_guru }}" readonly class="block w-full mt-1 bg-gray-100 border-gray-300 rounded-md cursor-not-allowed">
+
         </div>
 
         <!-- Tanggal Absen -->

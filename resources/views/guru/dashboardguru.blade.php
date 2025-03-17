@@ -22,7 +22,7 @@
        </a>
 
        <!-- Card Menu Report Absen -->
-       <a href="#" class="block p-6  text-blue-500 rounded-lg  hover:text-blue-900 transition duration-300 text-center">
+       <a href="{{ route('reward-guru') }}" class="block p-6  text-blue-500 rounded-lg  hover:text-blue-900 transition duration-300 text-center">
            <div class="flex flex-col items-center">
                <i class="fas fa-chart-line text-2xl mb-4"></i>
                <span class="text-sm font-bold">Laporan Absen</span>

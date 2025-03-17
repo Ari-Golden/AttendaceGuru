@@ -103,7 +103,9 @@
                 <x-responsive-nav-link :href="route('attendancePkl')" class="text-white hover:text-gray-200">
                     {{ __('Absen PKL') }}
                 </x-responsive-nav-link>
-
+                <x-responsive-nav-link :href="route('reward-guru')" class="text-white hover:text-gray-200">
+                    {{ __('Reward Absen') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('profile.edit')" class="text-white hover:text-gray-200">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>

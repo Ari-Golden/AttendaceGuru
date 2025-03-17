@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class userController extends Controller
 {
@@ -14,8 +15,24 @@ class userController extends Controller
     {
         // menampilkan data user
         $users = User::all();
-        return view('users.index', compact('users'));
+        $roles = Role::all();
+        return view('users.index', compact('users','roles'));
     }
+
+     // Assign role ke user tertentu
+     public function assignRole(Request $request, $id)
+     {
+         $user = User::findOrFail($id);
+         $role = Role::where('name', $request->role)->first();
+ 
+         if (!$role) {
+             return back()->with('error', 'Role tidak ditemukan.');
+         }
+ 
+         $user->syncRoles([$role->name]); // Hapus role lama, tambahkan role baru
+ 
+         return back()->with('success', 'Role berhasil diperbarui.');
+     }
 
     /**
      * Show the form for creating a new resource.

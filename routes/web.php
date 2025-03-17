@@ -68,6 +68,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/users', [userController::class, 'index'])
         ->name('users.index')
         ->middleware('role:admin');
+
+    Route::post('/users/{id}/assign-role', [UserController::class, 'assignRole'])
+    ->name('users.assignRole')
+    ->middleware('role:admin');
+
     Route::get('/users/{id}/edit', [AbsensiController::class, 'edit'])
         ->name('users.edit')
         ->middleware('role:admin');
@@ -140,6 +145,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reward', [AbsensiController::class, 'reward'])
         ->name('reward')
         ->middleware('role:admin');
+
+    
     
     
     Route::get('/reportTunjangan/pdf',[reportController::class,'index'])
@@ -217,6 +224,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/attendancePkl', [AbsensiController::class, 'attendancePkl'])
         ->name('attendancePkl.store')
+        ->middleware('role:guru|admin');
+
+    Route::get('/reward-guru',[AbsensiController::class, 'rewardUser'])
+        ->name('reward-guru')
         ->middleware('role:guru|admin');
 });
 
