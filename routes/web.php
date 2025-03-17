@@ -73,13 +73,13 @@ Route::middleware(['auth'])->group(function () {
     ->name('users.assignRole')
     ->middleware('role:admin');
 
-    Route::get('/users/{id}/edit', [AbsensiController::class, 'edit'])
+    Route::get('/users/{id}/edit', [userController::class, 'edit'])
         ->name('users.edit')
         ->middleware('role:admin');
-    Route::patch('/users/{id}', [AbsensiController::class, 'update'])
+    Route::patch('/users/{id}', [userController::class, 'update'])
         ->name('users.update')
         ->middleware('role:admin');
-    Route::delete('/users/{id}', [AbsensiController::class, 'destroy'])
+    Route::delete('/users/{id}', [userController::class, 'destroy'])
         ->name('users.destroy')
         ->middleware('role:admin');
     // Halaman Shift Schedule (hanya untuk admin)
