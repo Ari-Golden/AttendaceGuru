@@ -8,15 +8,13 @@
 
     <title>{{ config('app.name', 'Attendance Guru App') }}</title>
     <link rel="icon" href="{{ asset('images/Logo300.png') }}" type="image/x-icon">
-    {{-- ini map --}}
-
+    
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-    <!-- Fonts -->
+    
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#007bff">
@@ -24,11 +22,8 @@
 </head>
 
 <body class="font-sans antialiased">
-
     <div class="mt-4 mb-4 text-center">
-        
-        <h1 class="text-2xl font-bold">Laporan Reward Absen Guru SMK PGRI Talagasari Karawang</h1>       
-      
+        <h1 class="text-2xl font-bold">Laporan Reward Absen Guru SMK PGRI Talagasari Karawang</h1>
     </div>
 
     <div class="flex justify-center mt-4 mb-4 text-center text-sm font-bold ">
@@ -45,23 +40,24 @@
                 </tr>
             </thead>
             <tbody>
+                @php
+                    $totalTransportReward = 0;
+                @endphp
                 @foreach ($rewardData as $data)
+                @php
+                    $totalTransportReward += $data['transportReward'];
+                @endphp
                 <tr class="border-t">
+                    <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
                     <td class="px-4 py-2 border">
-                        {{ $loop->iteration }}
-                    </td>
-                    <td class="px-4 py-2 border">
-                    {{ $data['reward']->id_guru }} | {{ $data['reward']->nama_guru }} <br>
+                        {{ $data['reward']->id_guru }} | {{ $data['reward']->nama_guru }} <br>
                         <span class="text-sm font-bold text-red-600 textcenter">
                             {{ optional($schedules)->shift_note ?? 'Belum tersedia' }}
-
                         </span> <br>
                         <span class="text-sm font-bold text-red-600 textcenter">
-
                             Masuk {{ optional($schedules)->jam_masuk ?? 'Belum tersedia' }} -
                             Pulang {{ optional($schedules)->jam_pulang ?? 'Belum tersedia' }}
                         </span>
-
                     </td>
                     <td class="px-4 py-2 border">{{ $data['reward']->tgl_absen }}</td>
                     <td class="px-4 py-2 border">
@@ -71,7 +67,6 @@
                                 selisih keterlambatan : <br>
                                 {{ ceil($data['diffMasuk'] ?? 0) }} Menit
                             </span>
-
                         </div>
                     </td>
                     <td class="px-4 py-2 border">
@@ -84,15 +79,18 @@
                         </div>
                     </td>
                     <td class="px-4 py-2 border">
-                      uang transport per hari :  Rp. {{ number_format($data['transportAmount'], 0, ',', '.') }} X {{ $data['percentage'] }}%</td>
-                                             
-                    
-                    <td class="px-4 py-2 border">Rp. {{ number_format($data['transportReward'], 0, ',', '.') }}
+                        uang transport per hari : Rp. {{ number_format($data['transportAmount'], 0, ',', '.') }} X {{ $data['percentage'] }}%
                     </td>
-
+                    <td class="px-4 py-2 border">Rp. {{ number_format($data['transportReward'], 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
             </tbody>
+            <tfoot class="bg-gray-100 font-bold">
+                <tr>
+                    <td colspan="6" class="px-4 py-2 border text-right">Total Reward Transport:</td>
+                    <td class="px-4 py-2 border">Rp. {{ number_format($totalTransportReward, 0, ',', '.') }}</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </body>

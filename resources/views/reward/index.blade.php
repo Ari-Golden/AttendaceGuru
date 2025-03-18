@@ -16,7 +16,7 @@
                     class="block w-full p-2 border border-gray-300 rounded-md">
             </div>
         </div>
-            
+
         <div class="mb-4">
             <button onclick="filterByDate()"
                 class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Filter</button>
@@ -49,9 +49,9 @@
                 class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600">Download Excel</button>
             <!-- <button onclick="downloadPDF()" class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">Download
                 PDF</button> -->
-                <button class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">
-                    <a href="{{ route('reportTunjanganPdf') }}">view PDF</a>
-                </button>
+            <button class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">
+                <a href="{{ route('reportTunjanganPdf') }}">view PDF</a>
+            </button>
         </div>
         <script>
             async function downloadPDF() {
@@ -134,6 +134,7 @@
                     <th class="px-4 py-2 border">Pulang</th>
                     <th class="px-4 py-2 border">Persentase</th>
                     <th class="px-4 py-2 border">Reward Transport</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -180,6 +181,15 @@
                 </tr>
                 @endforeach
             </tbody>
+            <tfoot class="bg-gray-100">
+                <tr>
+                    <td colspan="6" class="px-4 py-2 font-bold text-right border">Total Reward Transport:</td>
+                    <td class="px-4 py-2 font-bold border">
+                        Rp. {{ number_format(array_sum(array_column($rewardData, 'transportReward')), 0, ',', '.') }}
+                    </td>
+                </tr>
+            </tfoot>
+
         </table>
         <!-- Tampilan Mobile -->
         <div class="grid gap-4 md:hidden">
@@ -207,7 +217,7 @@
         </div>
     </div>
     <div class="mt-6">
-        <a href="" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Generate to payroll</a>
+        <!-- <a href="" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Generate to payroll</a> -->
     </div>
 </div>
 @endsection

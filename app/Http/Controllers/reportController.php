@@ -6,6 +6,7 @@ use App\Exports\ExportTransport;
 use App\Models\tunjTranspost;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Browsershot\Browsershot;
@@ -114,11 +115,16 @@ class reportController extends Controller
             // Kirim data ke view
             $reviewPdf = view('reward.reportAbsen', compact('rewardData', 'schedules', 'transportAmount', 'percentage', 'transportReward'))->render();
 
-            Browsershot::html($reviewPdf)
-                ->showBackground()
-                ->margins(10, 10, 10, 10)
-                ->format('A4')
-                ->save(storage_path('\app\public\reportAbsen.pdf'));
+           $pdf= Browsershot::html($reviewPdf)
+           ->margins(5, 5, 5, 5)           
+              ->pdf();
+            
+            return new Response($pdf, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="reportAbsen.pdf"',
+            ]);
+            
+            return view('reward.reportAbsen', compact('rewardData', 'schedules', 'transportAmount', 'percentage', 'transportReward'));
                 
     }
 
