@@ -8,10 +8,10 @@
 
     <title>{{ config('app.name', 'Attendance Guru App') }}</title>
     <link rel="icon" href="{{ asset('images/Logo300.png') }}" type="image/x-icon">
-    
+
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-    
+
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
@@ -27,6 +27,11 @@
     </div>
 
     <div class="flex justify-center mt-4 mb-4 text-center text-sm font-bold ">
+        @if(isset($noDataMessage))
+        <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg text-center">
+            <p>{{ $noDataMessage }}</p>
+        </div>
+        @else
         <table class="w-full border border-gray-200 md:table">
             <thead class="bg-gray-100">
                 <tr>
@@ -41,11 +46,11 @@
             </thead>
             <tbody>
                 @php
-                    $totalTransportReward = 0;
+                $totalTransportReward = 0;
                 @endphp
                 @foreach ($rewardData as $data)
                 @php
-                    $totalTransportReward += $data['transportReward'];
+                $totalTransportReward += $data['transportReward'];
                 @endphp
                 <tr class="border-t">
                     <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
@@ -92,6 +97,7 @@
                 </tr>
             </tfoot>
         </table>
+        @endif
     </div>
 </body>
 

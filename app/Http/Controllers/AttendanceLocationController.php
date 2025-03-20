@@ -14,7 +14,7 @@ class AttendanceLocationController extends Controller
     {
 
        $locations = LocationAttendance::all();
-       $tikorSekolah = LocationAttendance::where('id', 2)
+       $tikorSekolah = LocationAttendance::where('id', 1)
        ->select('radius')
        ->first();
         return view('location.index',compact('locations','tikorSekolah'));
@@ -24,7 +24,7 @@ class AttendanceLocationController extends Controller
     {
 
      
-       $tikorSekolah = LocationAttendance::all()->where('id', 2)->first();
+       $tikorSekolah = LocationAttendance::all()->where('id', 1)->first();
        
         return view('guru.absensi',compact('tikorSekolah'));
     }

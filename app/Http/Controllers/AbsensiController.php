@@ -105,9 +105,21 @@ class AbsensiController extends Controller
 
         // Ambil data absensi guru
         $rewards = $query->get();
+      // **Tambahan: Jika Tidak Ada Data, Kirimkan Pesan ke View**
+          if ($rewards->isEmpty()) {
+              return view('reward.index', [
+                  'rewardData' => [],
+                  'schedules' => $schedules,
+                  'transportAmount' => $transportAmount,
+                  'percentage' => 100,
+                  'noDataMessage' => 'Belum ada data absensi untuk periode ini.'
+              ]);
+          }
 
         // Variabel untuk menyimpan perhitungan perbedaan waktu
         $rewardData = [];
+                  
+
 
         foreach ($rewards as $reward) {
             $diffMasuk = null;
@@ -124,25 +136,48 @@ class AbsensiController extends Controller
                 // Menghitung selisih waktu antara absensi dan jadwal
                 $diffMasuk = $jamMasuk->diffInMinutes($absensiMasuk, false); // false untuk memperbolehkan hasil negatif
                 $diffPulang = $jamPulang->diffInMinutes($absensiPulang, false);
+                 
+              
+              $percentage = 100; // Default, jika tidak ada keterlambatan atau pulang cepat
 
-                // Tentukan persentase berdasarkan perbedaan waktu
-                $percentage = 100; // default reward
+                  // Pastikan hanya menghitung jika ada absensi masuk
+                  if (!is_null($absensiMasuk)) {
+                      $diffMasuk = $jamMasuk->diffInMinutes($absensiMasuk, false);
 
-                // Jika terlambat 45 menit atau lebih atau pulang lebih cepat 45 menit atau lebih (75% dikurangi)
-                if (abs($diffMasuk) >= 45 || abs($diffPulang) >= 45) {
-                    $percentage = 25;
-                }
-                // Jika terlambat 30-44 menit atau pulang lebih cepat 30-44 menit (50% dikurangi)
-                elseif (abs($diffMasuk) >= 30 || abs($diffPulang) >= 30) {
-                    $percentage = 50;
-                }
-                // Jika terlambat 15-29 menit atau pulang lebih cepat 15-29 menit (25% dikurangi)
-                elseif (abs($diffMasuk) >= 15 || abs($diffPulang) >= 15) {
-                    $percentage = 75;
-                }
+                      if ($diffMasuk > 0) { // Hanya jika terlambat
+                          if ($diffMasuk >= 45) {
+                              $percentage -= 75;
+                          } elseif ($diffMasuk >= 30) {
+                              $percentage -= 50;
+                          } elseif ($diffMasuk >= 15) {
+                              $percentage -= 25;
+                          }
+                      }
+                  }
 
-                // Menghitung transport reward berdasarkan jam yang dihitung
-                $transportReward = $transportAmount * ($percentage / 100); // Persentase dari uang transport
+                  // Pastikan hanya menghitung jika ada absensi pulang
+                  if (!is_null($absensiPulang)) {
+                      $diffPulang = $jamPulang->diffInMinutes($absensiPulang, false);
+
+                      if ($diffPulang < 0) { // Hanya jika pulang lebih awal
+                          $diffPulang = abs($diffPulang);
+                          if ($diffPulang >= 45) {
+                              $percentage -= 75;
+                          } elseif ($diffPulang >= 30) {
+                              $percentage -= 50;
+                          } elseif ($diffPulang >= 15) {
+                              $percentage -= 25;
+                          }
+                      }
+                  }
+
+                  // Pastikan nilai tidak negatif
+                  $percentage = max($percentage, 0);
+
+                  // Hitung reward transport berdasarkan persentase kehadiran
+                  $transportReward = $transportAmount * ($percentage / 100);
+
+
             }
 
             $rewardData[] = [
@@ -397,15 +432,13 @@ class AbsensiController extends Controller
     }
 
 
-
-
-
-
-    public function store(Request $request)
+	 public function store(Request $request)
     {
-
+       
+       
         // Ambil titik koordinat dari database
-        $tikorSekolah = LocationAttendance::where('id', 2)->first();
+        $tikorSekolah = LocationAttendance::where('id', 1)->first();
+       
 
         $request->merge([
             'jam_absen' => str_replace('.', ':', $request->jam_absen),
@@ -430,7 +463,7 @@ class AbsensiController extends Controller
             'jam_absen' => 'required|date_format:H:i:s', // Jam absen harus valid (HH:MM:SS)
             'description' => 'required|string',
 
-        ]);
+        ]);       
 
         // Hitung jarak dengan Haversine formula
         $latitudeUser = $request->latitude;
@@ -443,6 +476,8 @@ class AbsensiController extends Controller
             sin($dLon / 2) * sin($dLon / 2);
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
         $distance = $earthRadius * $c;
+       
+     
 
         if ($distance > $radiusTikor) {
             return redirect()->back()->with('error', 'Absensi gagal! Anda berada di luar radius lokasi absensi.');
@@ -497,8 +532,6 @@ class AbsensiController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan');
         }
     }
-
-
 
     // Fungsi untuk menghitung jarak menggunakan rumus Haversine
     private function haversineDistance($lat1, $lon1, $lat2, $lon2)

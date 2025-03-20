@@ -28,9 +28,8 @@
                 @foreach ($users as $user)
                 <tr class="border-t hover:bg-gray-50">
                     <td class="px-4 py-2 border">{{ $user->id }}</td>
-                    <td class="flex items-center gap-2 px-4 py-2 border">
-                        <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-8 h-8 rounded-full">
-                        <span class="font-semibold">{{ $user->name }}</span>
+                    <td class=" px-4 py-2 border">
+                     <span class="font-semibold">{{ $user->name }}</span>
                     </td>
                     <td class="px-4 py-2 border">
                         <span>{{ $user->email }}</span> <br>

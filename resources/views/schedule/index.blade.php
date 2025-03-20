@@ -44,6 +44,8 @@
         <table class="hidden w-full border border-gray-200 md:table">
             <thead class="bg-gray-100">
                 <tr>
+                    <th class="px-4 py-2 border">No</th>
+                    <th class="px-4 py-2 border">User ID</th>
                     <th class="px-4 py-2 border">Nama Guru</th>
                     <th class="px-4 py-2 border">Shift Code</th>
                     <th class="px-4 py-2 border">Note</th>
@@ -55,6 +57,8 @@
             <tbody>
                 @foreach ($schedules as $schedule)
                 <tr class="border-t">
+                    <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
+                    <td class="px-4 py-2 border">{{ $schedule->id }}</td>
                     <td class="px-4 py-2 border">{{ $schedule->nama_guru }}</td>
                     <td class="px-4 py-2 text-center border">{{ $schedule->shift_code }}</td>
                     <td class="px-4 py-2 border">{{ $schedule->shift_note }}</td>

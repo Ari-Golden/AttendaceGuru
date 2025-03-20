@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
-    <link rel="icon" href="{{ asset('images/Logo300.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/logo300.png') }}" type="image/x-icon">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -21,7 +21,7 @@
     <div class="flex flex-col items-center min-h-screen pt-6 bg-gray-100 sm:justify-center sm:pt-0 dark:bg-gray-900">
         <div>
             <a href="/">
-                <img src="{{ asset('images/Logo300.png') }}" alt="AttendanceGuru Logo" class="w-32 h-auto mx-auto mb-6">
+                <img src="{{ asset('images/logo300.png') }}" alt="AttendanceGuru Logo" class="w-32 h-auto mx-auto mb-6">
             </a>
         </div>
 

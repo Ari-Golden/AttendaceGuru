@@ -182,7 +182,8 @@
                 },
                 function(error) {
                     console.error('Error mendapatkan lokasi:', error);
-                }
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         }
 

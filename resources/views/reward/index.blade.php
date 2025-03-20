@@ -124,6 +124,11 @@
                 }
             }
         </script>
+          @if(isset($noDataMessage))
+        <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg text-center">
+            <p>{{ $noDataMessage }}</p>
+        </div>
+   		 @else
         <table class="w-full border border-gray-200 md:table">
             <thead class="bg-gray-100">
                 <tr>
@@ -191,6 +196,7 @@
             </tfoot>
 
         </table>
+      @endif
         <!-- Tampilan Mobile -->
         <div class="grid gap-4 md:hidden">
             @foreach ($rewardData as $data)
@@ -203,7 +209,7 @@
                     </div>
                 </div>
                 <div class="flex justify-end">
-                    <a href="{{ route('reward.edit', $data['reward']->id_guru) }}"
+                    <a href="#"
                         class="text-blue-600 hover:text-blue-800">Edit</a>
                     |
                     <form action="" method="POST" class="inline">

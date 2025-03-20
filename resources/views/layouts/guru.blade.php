@@ -9,6 +9,10 @@
     <title>{{ config('app.name', 'Attendance Guru App') }}</title>
     <link rel="icon" href="{{ asset('images/Logo300.png') }}" type="image/x-icon">
     {{-- ini map --}}
+  
+  	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
 
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
@@ -18,7 +22,7 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#007bff">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </head>

@@ -17,7 +17,7 @@
             <!-- ID Guru -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">ID Guru</label>
-                <input type="text" name="id_guru" value="{{ $shiftSchedule->id_guru }}"
+                <input type="text" name="id_guru" value="{{ $shiftSchedule->id }}"
                     class="w-full p-2 mt-1 bg-gray-100 border rounded-md" readonly>
             </div>
 

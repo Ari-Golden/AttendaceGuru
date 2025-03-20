@@ -12,7 +12,7 @@
     <header class="fixed top-0 left-0 z-50 hidden w-full py-4 shadow-md bg-sky-800 lg:block">
         <div class="container flex items-center justify-between mx-auto">
             <div class="flex items-center">
-                <img src="{{ asset('images/Logo300.png') }}" alt="AttendanceGuru Logo" class="w-12 h-auto mr-3">
+                <img src="{{ asset('images/logo300.png') }}" alt="AttendanceGuru Logo" class="w-12 h-auto mr-3">
                 <span class="text-xl font-bold text-blue-400">SMK PGRI TALAGASARI KARAWANG</span>
             </div>
             @if (Route::has('login'))
@@ -42,7 +42,7 @@
 
     <div class="flex items-center justify-center min-h-screen">
         <div class="w-full max-w-lg p-8 text-center bg-white rounded-lg shadow-lg">
-            <img src="{{ asset('images/Logo300.png') }}" alt="AttendanceGuru Logo" class="w-32 h-auto mx-auto mb-6">
+            <img src="{{ asset('images/logo300.png') }}" alt="AttendanceGuru Logo" class="w-32 h-auto mx-auto mb-6">
             <h1 class="mb-4 text-4xl font-bold text-center text-blue-600">Welcome to AttendanceGuru</h1>
             <p class="mb-6 text-lg text-center text-gray-700">Your reliable partner in managing attendance efficiently.
             </p>

@@ -95,93 +95,82 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Ambil waktu server untuk tanggal dan jam absen
-        function updateRealtimeClock() {
-        const now = new Date(); // Ambil waktu lokal perangkat
-
-        // Format tanggal (YYYY-MM-DD)
-        const tanggal = now.toISOString().split('T')[0];
-
-        // Format jam (HH:mm:ss)
-        const jam = now.toLocaleTimeString('id-ID', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
+ document.addEventListener('DOMContentLoaded', function() {
+    function updateRealtimeClock() {
+        const now = new Date();
+        document.getElementById('tgl_absen').value = now.toISOString().split('T')[0];
+        document.getElementById('jam_absen').value = now.toLocaleTimeString('id-ID', {
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
         });
-
-        // Masukkan ke dalam input form
-        document.getElementById('tgl_absen').value = tanggal;
-        document.getElementById('jam_absen').value = jam;
     }
-
-    // Jalankan fungsi pertama kali
+    setInterval(updateRealtimeClock, 1000);
     updateRealtimeClock();
 
-    // Update jam setiap detik
-    setInterval(updateRealtimeClock, 1000);
-        // Ambil lokasi pengguna
+    document.getElementById('lokasi_absen').value = 'Mengambil lokasi...';
+    
+    function getLocation(retry = 3) {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-
+                    const { latitude, longitude, accuracy } = position.coords;
                     document.getElementById('latitude').value = latitude;
                     document.getElementById('longitude').value = longitude;
-                    document.getElementById('lokasi_absen').value = `Latitude: ${latitude}, Longitude: ${longitude}`;
-
+                    document.getElementById('lokasi_absen').value = `Latitude: ${latitude}, Longitude: ${longitude} (Akurasi: ${accuracy}m)`;
                     initializeMap(latitude, longitude);
                 },
                 (error) => {
-                    console.error('Error mendapatkan lokasi:', error);
-                }
+                    console.error('Gagal mendapatkan lokasi:', error);
+                    if (retry > 0) {
+                        setTimeout(() => getLocation(retry - 1), 2000);
+                    } else {
+                        document.getElementById('lokasi_absen').value = 'Gagal mendapatkan lokasi.';
+                    }
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
+        } else {
+            document.getElementById('lokasi_absen').value = 'Geolocation tidak didukung di perangkat ini';
+        }
+    }
+    getLocation();
+
+    function initializeMap(latitude, longitude) {
+        const sekolahLat = parseFloat(document.getElementById('latitude_tikor').value) || 0;
+        const sekolahLng = parseFloat(document.getElementById('longitude_tikor').value) || 0;
+        const sekolahRadius = parseFloat(document.getElementById('radius_tikor').value) || 0;
+
+        const map = L.map('map').setView([latitude, longitude], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        if (sekolahLat && sekolahLng) {
+            L.marker([sekolahLat, sekolahLng], {
+                icon: L.icon({
+                    iconUrl: 'https://cdn-icons-png.flaticon.com/32/684/684908.png',
+                    iconSize: [30, 30]
+                })
+            }).addTo(map).bindPopup('<b>Lokasi Sekolah</b>').openPopup();
+
+            if (sekolahRadius > 0) {
+                L.circle([sekolahLat, sekolahLng], {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.3,
+                    radius: sekolahRadius
+                }).addTo(map);
+            }
         }
 
-        // Fungsi inisialisasi peta
-        function initializeMap(latitude, longitude) {
-            const map = L.map('map').setView([latitude, longitude], 15);
-
-            // Tambahkan layer peta
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-
-            // Ambil titik koordinat sekolah dari input hidden
-            const sekolahLat = parseFloat(document.getElementById('latitude_tikor').value);
-            const sekolahLng = parseFloat(document.getElementById('longitude_tikor').value);
-            const sekolahRadius = parseFloat(document.getElementById('radius_tikor').value);
-
-            // Marker lokasi pengguna
-            const userMarker = L.marker([latitude, longitude], {
-                    icon: L.icon({
-                        iconUrl: 'https://cdn-icons-png.flaticon.com/32/684/684908.png',
-                        iconSize: [30, 30]
-                    })
-                }).addTo(map)
-                .bindPopup('<b>Lokasi Anda</b>').openPopup();
-
-            // Marker lokasi sekolah
-            const schoolMarker = L.marker([sekolahLat, sekolahLng], {
-                    icon: L.icon({
-                        iconUrl: 'https://cdn-icons-png.flaticon.com/32/684/684809.png',
-                        iconSize: [30, 30]
-                    })
-                }).addTo(map)
-                .bindPopup('<b>Lokasi Sekolah</b><br>Radius: ' + sekolahRadius + ' meter');
-
-            // Lingkaran radius sekolah
-            L.circle([sekolahLat, sekolahLng], {
-                color: 'blue',
-                fillColor: '#blue',
-                fillOpacity: 0.3,
-                radius: sekolahRadius
-            }).addTo(map);
-        }
-
-
-        // Foto selfie
+        L.marker([latitude, longitude], {
+            icon: L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/32/684/684908.png',
+                iconSize: [30, 30]
+            })
+        }).addTo(map).bindPopup('<b>Lokasi Anda</b>').openPopup();
+    }
+   
+   // Foto selfie
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const captureButton = document.getElementById('capture');
@@ -222,8 +211,10 @@
             photoPreview.src = fotoBase64;
             photoPreview.classList.remove('hidden');
         });
+});
+  
+  
 
-    });
 </script>
 
 @endsection

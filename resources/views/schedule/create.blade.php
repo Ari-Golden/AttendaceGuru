@@ -40,7 +40,7 @@
                                 <td class="p-2 border">{{ $user->id_guru }}</td>
                                 <td class="p-2 border">{{ $user->name }}</td>
                                 <td class="p-2 text-center border">
-                                    <input type="checkbox" class="userCheckbox" data-id="{{ $user->id_guru }}"
+                                    <input type="checkbox" class="userCheckbox" data-id="{{ $user->id }}"
                                         data-name="{{ $user->name }}">
                                 </td>
                             </tr>
@@ -58,7 +58,7 @@
                     <table class="min-w-full border border-gray-300">
                         <thead>
                             <tr class="bg-gray-100">
-                                <th class="p-2 border">ID Guru</th>
+                                <th class="p-2 border">UserId</th>
                                 <th class="p-2 border">Nama Guru</th>
                                 <th class="p-2 border">Hapus</th>
                             </tr>
