@@ -56,4 +56,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Absensi::class, 'guru_id');
     }
+    public function jadwal()
+    {
+        return $this->hasMany(JadwalGuru::class, 'user_id', 'id');
+    }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AttendanceLocationController;
+use App\Http\Controllers\JadwalGuruController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\reportController;
 use App\Http\Controllers\ShiftCodeController;
@@ -82,6 +83,32 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/users/{id}', [userController::class, 'destroy'])
         ->name('users.destroy')
         ->middleware('role:admin');
+
+        // jadwal guru
+
+    Route::get('/jadwal-guru', [JadwalGuruController::class, 'index'])        
+    ->name('jadwal_guru.index');
+Route::get('/jadwal-guru/create', [JadwalGuruController::class, 'create'])
+    ->name('jadwal-guru.create')
+    ->middleware('role:admin');
+Route::get('/jadwal-guru/create/{id}', [JadwalGuruController::class, 'createbyid'])
+    ->name('jadwal-guru.create.id')
+    ->middleware('role:admin');
+Route::post('/jadwal-guru', [JadwalGuruController::class, 'store'])
+    ->name('jadwal-guru.store')
+    ->middleware('role:admin');
+Route::get('/jadwal-guru/{jadwalGuru}/edit', [JadwalGuruController::class, 'edit'])
+    ->name('jadwal-guru.edit')
+    ->middleware('role:admin');
+Route::patch('/jadwal_guru/{jadwalGuru}', [JadwalGuruController::class, 'update'])
+    ->name('jadwal_guru.update')
+    ->middleware('role:admin')
+    ->where('jadwalGuru', '[0-9]+'); // Ensure jadwalGuru is a number
+Route::delete('/jadwal-guru/{jadwalGuru}', [JadwalGuruController::class, 'destroy'])
+    ->name('jadwal-guru.destroy')
+    ->middleware('role:admin');
+
+
     // Halaman Shift Schedule (hanya untuk admin)
     Route::get('/shift-schedules', [ShiftScheduleController::class, 'index'])
         ->name('shift-schedules.index')

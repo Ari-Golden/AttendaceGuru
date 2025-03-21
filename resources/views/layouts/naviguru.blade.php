@@ -33,13 +33,13 @@
                         {{ __('Users') }}
                     </x-nav-link>
                 </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <!-- <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('shift-code.index')" :active="request()->routeIs('shift-code.index')" class="text-white hover:text-gray-200">
                         {{ __('Shift') }}
                     </x-nav-link>
-                </div>
+                </div> -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('shift-schedules.index')" :active="request()->routeIs('shift-schedules.index')" class="text-white hover:text-gray-200">
+                    <x-nav-link :href="route('jadwal_guru.index')" :active="request()->routeIs('jadwal_guru.index')" class="text-white hover:text-gray-200">
                         {{ __('Jadwal Shift Guru') }}
                     </x-nav-link>
                 </div>
@@ -143,13 +143,13 @@
             </x-responsive-nav-link>
         </div>
 
-        <div class="pt-2 pb-3 space-y-1">
+        <!-- <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('shift-code.index')" :active="request()->routeIs('shift-code.index')" class="text-white hover:text-gray-500">
                 {{ __('Shift') }}
             </x-responsive-nav-link>
-        </div>
+        </div> -->
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('shift-schedules.index')" :active="request()->routeIs('shift-schedules.index')" class="text-white hover:text-gray-500">
+            <x-responsive-nav-link :href="route('shift-schedules.index')" :active="request()->routeIs('jadwal_guru.index')" class="text-white hover:text-gray-500">
                 {{ __('Jadwal Shift Guru') }}
             </x-responsive-nav-link>
         </div>
