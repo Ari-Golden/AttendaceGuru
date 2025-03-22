@@ -18,20 +18,24 @@ class reportController extends Controller
      */
     public function index(Request $request)
     {
-
-        // Query dasar menggunakan Query Builder untuk data absensi
+        // Query dasar untuk data absensi
         $query = DB::table('absensis')
             ->join('users', 'absensis.guru_id', '=', 'users.id')
+            ->join('jadwal_gurus', 'absensis.id_jadwal', '=', 'jadwal_gurus.id_jadwal')
             ->select(
                 'users.name as nama_guru',
                 'users.id as id_user',
                 'users.id_guru as id_guru',
                 'users.program_studi as mapel',
+                DB::raw('MAX(jadwal_gurus.jam_masuk) as standar_masuk'),
+                DB::raw('MAX(jadwal_gurus.jam_pulang) as standar_pulang'),
                 DB::raw('MAX(absensis.tgl_absen) as tgl_absen'),
                 DB::raw('MAX(CASE WHEN absensis.status = "Masuk" THEN absensis.jam_absen END) as jam_masuk'),
+                DB::raw('MAX(absensis.keterlambatan) as keterlambatan'),
                 DB::raw('MAX(CASE WHEN absensis.status = "pulang" THEN absensis.jam_absen END) as jam_pulang')
             )
             ->groupBy('users.id_guru', 'users.name', 'users.id', 'users.program_studi');
+
 
         // Filter berdasarkan tanggal absen jika ada
         if ($request->has('from_date') && $request->has('until_date')) {
@@ -40,101 +44,79 @@ class reportController extends Controller
             $query->whereBetween('absensis.tgl_absen', [$fromDate, $untilDate]);
         }
 
-        // schedule absensi
-        $schedules = DB::table('shift_schedules')
-            ->leftJoin('users', 'shift_schedules.id_guru', '=', 'users.id_guru')
-            ->leftJoin('shift_codes', 'shift_schedules.shift_code', '=', 'shift_codes.id')
-            ->select(
-                'shift_schedules.*',
-                'users.name as nama_guru',
-                'shift_codes.note as shift_note',
-                'shift_codes.jam_masuk',
-                'shift_codes.jam_pulang'
-            )
-            ->first();
-
-        $amountTransport = tunjTranspost::where('id', 1)->value('amount');
-
-
-        // Uang transport
-        $transportAmount = $amountTransport; // Uang transport tetap
+        // Ambil jumlah uang transport
+        $amountTransport = TunjTranspost::where('id', 1)->value('amount');
+        $transportAmount = $amountTransport;
 
         // Ambil data absensi guru
         $rewards = $query->get();
-        // **Tambahan: Jika Tidak Ada Data, Kirimkan Pesan ke View**
+
+        // Jika tidak ada data, kirim pesan ke view
         if ($rewards->isEmpty()) {
             return view('reward.index', [
                 'rewardData' => [],
-                'schedules' => $schedules,
                 'transportAmount' => $transportAmount,
                 'percentage' => 100,
                 'noDataMessage' => 'Belum ada data absensi untuk periode ini.'
             ]);
         }
 
-        // Variabel untuk menyimpan perhitungan perbedaan waktu
+        // Variabel untuk menyimpan data reward
         $rewardData = [];
 
         foreach ($rewards as $reward) {
-            $diffMasuk = null;
-            $diffPulang = null;
-            $transportReward = 0;
+            $percentage = 100; // Mulai dari 100%, nanti dikurangi sesuai keterlambatan
+            $diffMasuk = 0;
+            $diffPulang = 0;
 
-            if ($schedules) {
-                $jamMasuk = Carbon::parse($schedules->jam_masuk);
-                $jamPulang = Carbon::parse($schedules->jam_pulang);
+            // Konversi waktu ke Carbon
+            $jamMasuk = Carbon::parse($reward->standar_masuk);
+            $jamPulang = Carbon::parse($reward->standar_pulang);
+            $absensiMasuk = $reward->jam_masuk ? Carbon::parse($reward->jam_masuk) : null;
+            $absensiPulang = $reward->jam_pulang ? Carbon::parse($reward->jam_pulang) : null;
 
-                $absensiMasuk = Carbon::parse($reward->jam_masuk);
-                $absensiPulang = Carbon::parse($reward->jam_pulang);
-
-                // Menghitung selisih waktu antara absensi dan jadwal
-                $diffMasuk = $jamMasuk->diffInMinutes($absensiMasuk, false); // false untuk memperbolehkan hasil negatif
-                $diffPulang = $jamPulang->diffInMinutes($absensiPulang, false);
-
-                // Tentukan persentase berdasarkan perbedaan waktu
-                $percentage = 100; // default reward
-
-                // Jika terlambat 45 menit atau lebih atau pulang lebih cepat 45 menit atau lebih (75% dikurangi)
-                if (abs($diffMasuk) >= 45 || abs($diffPulang) >= 45) {
-                    $percentage = 25;
+            // Hitung keterlambatan masuk
+            if (!is_null($absensiMasuk) && $absensiMasuk->greaterThan($jamMasuk)) {
+                $diffMasuk = $absensiMasuk->diffInMinutes($jamMasuk);
+                if ($diffMasuk >= 45) {
+                    $percentage -= 75;
+                } elseif ($diffMasuk >= 30) {
+                    $percentage -= 50;
+                } elseif ($diffMasuk >= 15) {
+                    $percentage -= 25;
                 }
-                // Jika terlambat 30-44 menit atau pulang lebih cepat 30-44 menit (50% dikurangi)
-                elseif (abs($diffMasuk) >= 30 || abs($diffPulang) >= 30) {
-                    $percentage = 50;
-                }
-                // Jika terlambat 15-29 menit atau pulang lebih cepat 15-29 menit (25% dikurangi)
-                elseif (abs($diffMasuk) >= 15 || abs($diffPulang) >= 15) {
-                    $percentage = 75;
-                }
-
-                // Menghitung transport reward berdasarkan jam yang dihitung
-                $transportReward = $transportAmount * ($percentage / 100); // Persentase dari uang transport
             }
+
+            // Hitung keterlambatan pulang (pulang lebih awal)
+            if (!is_null($absensiPulang) && $absensiPulang->lessThan($jamPulang)) {
+                $diffPulang = $jamPulang->diffInMinutes($absensiPulang);
+                if ($diffPulang >= 45) {
+                    $percentage -= 75;
+                } elseif ($diffPulang >= 30) {
+                    $percentage -= 50;
+                } elseif ($diffPulang >= 15) {
+                    $percentage -= 25;
+                }
+            }
+
+            // Pastikan persentase minimal 0%
+            $percentage = max($percentage, 0);
+
+            // Hitung reward transport berdasarkan persentase kehadiran
+            $transportReward = $transportAmount * ($percentage / 100);
 
             $rewardData[] = [
                 'reward' => $reward,
                 'diffMasuk' => $diffMasuk,
                 'diffPulang' => $diffPulang,
                 'transportReward' => $transportReward,
-                'shift_note' => $schedules->shift_note,
+                'transportAmount' => $transportAmount,
                 'percentage' => $percentage,
-                'transportAmount' => $transportAmount
             ];
         }
 
         // Kirim data ke view
-        $reviewPdf = view('reward.reportAbsen', compact('rewardData', 'schedules', 'transportAmount', 'percentage', 'transportReward'))->render();
-
-        $pdf = Browsershot::html($reviewPdf)
-            ->margins(5, 5, 5, 5)
-            ->pdf();
-
-        return new Response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="reportAbsen.pdf"',
-        ]);
-
-        return view('reward.reportAbsen', compact('rewardData', 'schedules', 'transportAmount', 'percentage', 'transportReward'));
+        return view('reward.reportAbsen', compact('rewardData', 'transportAmount','transportReward', 'percentage'));
     }
 
     public function exportExcel()

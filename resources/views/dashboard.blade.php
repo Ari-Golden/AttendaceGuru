@@ -54,13 +54,13 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-3 py-2 text-left text-gray-500 uppercase">No</th>
-                        <th class="px-3 py-2 text-left text-gray-500 uppercase">Nama</th>
-                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">NIK</th>
-                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">Mapel</th>
+                        <th class="px-3 py-2 text-left text-gray-500 uppercase">Nama</th>                                            
                         <th class="px-3 py-2 text-left text-gray-500 uppercase">Status</th>
                         <th class="px-3 py-2 text-left text-gray-500 uppercase">Foto</th>
                         <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">Tanggal</th>
-                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">Jam</th>
+                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">Jam Standard Absen</th>
+                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">Jam Absen</th>
+                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">Keterlambatan</th>
                         <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">Lokasi</th>
                     </tr>
                 </thead>
@@ -68,9 +68,7 @@
                     @foreach ($absensi as $item)
                         <tr class="hover:bg-gray-50">
                             <td class="px-3 py-2">{{ $loop->iteration }}</td>
-                            <td class="px-3 py-2">{{ $item->nama_guru }}</td>
-                            <td class="hidden px-3 py-2 md:table-cell">{{ $item->id_guru }}</td>
-                            <td class="hidden px-3 py-2 md:table-cell">{{ $item->mapel }}</td>
+                            <td class="px-3 py-2">{{ $item->nama_guru }}</td> 
                             <td class="px-3 py-2">
                                 <span
                                     class="{{ $item->status === 'masuk' ? 'text-green-600' : 'text-red-600' }} font-medium">
@@ -84,7 +82,9 @@
                             <td class="hidden px-3 py-2 md:table-cell">
                                 {{ \Carbon\Carbon::parse($item->tgl_absen)->format('d/m/Y') }}
                             </td>
+                            <td class="hidden px-3 py-2 md:table-cell">{{ $item->jam_masuk }} - {{ $item->jam_pulang }}</td>
                             <td class="hidden px-3 py-2 md:table-cell">{{ $item->jam_absen }}</td>
+                            <td class="hidden px-3 py-2 md:table-cell">{{ $item->keterlambatan }} Menit</td>
                             <td class="hidden px-3 py-2 md:table-cell">{{ $item->lokasi_absen }}</td>
                         </tr>
                     @endforeach

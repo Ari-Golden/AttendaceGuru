@@ -55,13 +55,11 @@
                 <tr class="border-t">
                     <td class="px-4 py-2 border">{{ $loop->iteration }}</td>
                     <td class="px-4 py-2 border">
-                        {{ $data['reward']->id_guru }} | {{ $data['reward']->nama_guru }} <br>
+                        {{ $data['reward']->id_user }} | {{ $data['reward']->nama_guru }} <br>
+                       
                         <span class="text-sm font-bold text-red-600 textcenter">
-                            {{ optional($schedules)->shift_note ?? 'Belum tersedia' }}
-                        </span> <br>
-                        <span class="text-sm font-bold text-red-600 textcenter">
-                            Masuk {{ optional($schedules)->jam_masuk ?? 'Belum tersedia' }} -
-                            Pulang {{ optional($schedules)->jam_pulang ?? 'Belum tersedia' }}
+                        Masuk {{$data['reward']->standar_masuk ?? 'Belum tersedia' }} -
+                        Pulang {{$data['reward']->standar_pulang ?? 'Belum tersedia' }}
                         </span>
                     </td>
                     <td class="px-4 py-2 border">{{ $data['reward']->tgl_absen }}</td>
@@ -84,7 +82,7 @@
                         </div>
                     </td>
                     <td class="px-4 py-2 border">
-                        uang transport per hari : Rp. {{ number_format($data['transportAmount'], 0, ',', '.') }} X {{ $data['percentage'] }}%
+                         {{ $data['percentage'] }}%
                     </td>
                     <td class="px-4 py-2 border">Rp. {{ number_format($data['transportReward'], 0, ',', '.') }}</td>
                 </tr>

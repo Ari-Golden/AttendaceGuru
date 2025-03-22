@@ -105,7 +105,7 @@ class JadwalGuruController extends Controller
     
         $request->validate([
             'user_id'   => 'required|exists:users,id',
-            'hari'      => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu',
+            // 'hari'      => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu',
             'jam_masuk' => 'required|date_format:H:i',
             'jam_pulang' => 'required|date_format:H:i|after:jam_masuk',
         ]);

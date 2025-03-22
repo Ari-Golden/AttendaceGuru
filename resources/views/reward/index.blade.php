@@ -145,17 +145,13 @@
             <tbody>
                 @foreach ($rewardData as $data)
                 <tr class="border-t">
-                    <td class="px-4 py-2 border">{{ $data['reward']->id_guru }}</td>
+                    <td class="px-4 py-2 border">{{$data['reward']->id_user }}</td>
                     <td class="px-4 py-2 border">
-                        {{ $data['reward']->nama_guru }} <br>
-                        <span class="text-sm font-bold text-red-600 textcenter">
-                            {{ optional($schedules)->shift_note ?? 'Belum tersedia' }}
-
-                        </span> <br>
+                        {{ $data['reward']->nama_guru }}  <br>
                         <span class="text-sm font-bold text-red-600 textcenter">
 
-                            Masuk {{ optional($schedules)->jam_masuk ?? 'Belum tersedia' }} -
-                            Pulang {{ optional($schedules)->jam_pulang ?? 'Belum tersedia' }}
+                            Masuk {{$data['reward']->standar_masuk ?? 'Belum tersedia' }} -
+                            Pulang {{$data['reward']->standar_pulang ?? 'Belum tersedia' }}
                         </span>
 
                     </td>

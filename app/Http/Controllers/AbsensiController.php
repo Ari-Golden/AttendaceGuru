@@ -27,20 +27,20 @@ class AbsensiController extends Controller
         // Query dasar menggunakan Query Builder
         $query = DB::table('absensis') // Tabel absensi
             ->join('users', 'absensis.guru_id', '=', 'users.id') // Join dengan tabel users
-            ->select('absensis.*', 'users.name as nama_guru', 'users.id as id_user', 'users.id_guru as id_guru', 'users.program_studi as mapel'); // Pilih kolom yang diperlukan
+            ->join('jadwal_gurus', 'absensis.id_jadwal', '=', 'jadwal_gurus.id_jadwal') // Join dengan tabel jadwal_gurus
+            ->select('absensis.*', 
+            'users.name as nama_guru',
+             'users.id as id_user', 
+             'users.id_guru as id_guru', 
+             'users.program_studi as mapel',
+                'jadwal_gurus.jam_masuk', 
+                'jadwal_gurus.jam_pulang'
 
-        // schedule absensi
-        $schedules = DB::table('shift_schedules')
-            ->join('users', 'shift_schedules.id_guru', '=', 'users.id_guru')
-            ->join('shift_codes', 'shift_schedules.shift_code', '=', 'shift_codes.id')
-            ->select(
-                'shift_schedules.*',
-                'users.name as nama_guru',
-                'shift_codes.note as shift_note',
-                'shift_codes.jam_masuk',
-                'shift_codes.jam_pulang'
-            )
-            ->get();
+
+            
+            ); // Pilih kolom yang diperlukan
+
+       
 
         // Filter berdasarkan status
         if ($request->has('status') && !empty($request->status) && $request->status !== 'semua') {
@@ -56,251 +56,218 @@ class AbsensiController extends Controller
         $absensi = $query->paginate(10);
 
 
-        return view('dashboard', compact('absensi', 'schedules'));
+        return view('dashboard', compact('absensi'));
     }
 
     // app/Http/Controllers/RewardController.php
     public function reward(Request $request)
     {
-        
-        // Query dasar menggunakan Query Builder untuk data absensi
+        // Query dasar untuk data absensi
         $query = DB::table('absensis')
-            ->join('users', 'absensis.guru_id', '=', 'users.id')
-            ->select(
-                'users.name as nama_guru',
-                'users.id as id_user',
-                'users.id_guru as id_guru',
-                'users.program_studi as mapel',
-                DB::raw('MAX(absensis.tgl_absen) as tgl_absen'),
-                DB::raw('MAX(CASE WHEN absensis.status = "Masuk" THEN absensis.jam_absen END) as jam_masuk'),
-                DB::raw('MAX(CASE WHEN absensis.status = "pulang" THEN absensis.jam_absen END) as jam_pulang')
-            )
-            ->groupBy('users.id_guru', 'users.name', 'users.id', 'users.program_studi');
-
+        ->join('users', 'absensis.guru_id', '=', 'users.id')
+        ->join('jadwal_gurus', 'absensis.id_jadwal', '=', 'jadwal_gurus.id_jadwal')
+        ->select(
+            'users.name as nama_guru',
+            'users.id as id_user',
+            'users.id_guru as id_guru',
+            'users.program_studi as mapel',
+            DB::raw('MAX(jadwal_gurus.jam_masuk) as standar_masuk'),
+            DB::raw('MAX(jadwal_gurus.jam_pulang) as standar_pulang'),
+            DB::raw('MAX(absensis.tgl_absen) as tgl_absen'),
+            DB::raw('MAX(CASE WHEN absensis.status = "Masuk" THEN absensis.jam_absen END) as jam_masuk'),
+            DB::raw('MAX(absensis.keterlambatan) as keterlambatan'),
+            DB::raw('MAX(CASE WHEN absensis.status = "pulang" THEN absensis.jam_absen END) as jam_pulang')
+        )
+        ->groupBy('users.id_guru', 'users.name', 'users.id', 'users.program_studi');
+    
+    
         // Filter berdasarkan tanggal absen jika ada
         if ($request->has('from_date') && $request->has('until_date')) {
             $fromDate = $request->input('from_date');
             $untilDate = $request->input('until_date');
             $query->whereBetween('absensis.tgl_absen', [$fromDate, $untilDate]);
         }
-
-        // schedule absensi
-        $schedules = DB::table('shift_schedules')
-            ->leftJoin('users', 'shift_schedules.id_guru', '=', 'users.id_guru')
-            ->leftJoin('shift_codes', 'shift_schedules.shift_code', '=', 'shift_codes.id')
-            ->select(
-                'shift_schedules.*',
-                'users.name as nama_guru',
-                'shift_codes.note as shift_note',
-                'shift_codes.jam_masuk',
-                'shift_codes.jam_pulang'
-            )
-            ->first();
-
-            $amountTransport = TunjTranspost::where('id', 1)->value('amount');      
-
-
-        // Uang transport
-        $transportAmount = $amountTransport; // Uang transport tetap
-
+    
+        // Ambil jumlah uang transport
+        $amountTransport = TunjTranspost::where('id', 1)->value('amount');
+        $transportAmount = $amountTransport; 
+    
         // Ambil data absensi guru
         $rewards = $query->get();
-      // **Tambahan: Jika Tidak Ada Data, Kirimkan Pesan ke View**
-          if ($rewards->isEmpty()) {
-              return view('reward.index', [
-                  'rewardData' => [],
-                  'schedules' => $schedules,
-                  'transportAmount' => $transportAmount,
-                  'percentage' => 100,
-                  'noDataMessage' => 'Belum ada data absensi untuk periode ini.'
-              ]);
-          }
-
-        // Variabel untuk menyimpan perhitungan perbedaan waktu
+    
+        // Jika tidak ada data, kirim pesan ke view
+        if ($rewards->isEmpty()) {
+            return view('reward.index', [
+                'rewardData' => [],
+                'transportAmount' => $transportAmount,
+                'percentage' => 100,
+                'noDataMessage' => 'Belum ada data absensi untuk periode ini.'
+            ]);
+        }
+    
+        // Variabel untuk menyimpan data reward
         $rewardData = [];
-                  
-
-
+    
         foreach ($rewards as $reward) {
-            $diffMasuk = null;
-            $diffPulang = null;
-            $transportReward = 0;
-
-            if ($schedules) {
-                $jamMasuk = Carbon::parse($schedules->jam_masuk);
-                $jamPulang = Carbon::parse($schedules->jam_pulang);
-
-                $absensiMasuk = Carbon::parse($reward->jam_masuk);
-                $absensiPulang = Carbon::parse($reward->jam_pulang);
-
-                // Menghitung selisih waktu antara absensi dan jadwal
-                $diffMasuk = $jamMasuk->diffInMinutes($absensiMasuk, false); // false untuk memperbolehkan hasil negatif
-                $diffPulang = $jamPulang->diffInMinutes($absensiPulang, false);
-                 
-              
-              $percentage = 100; // Default, jika tidak ada keterlambatan atau pulang cepat
-
-                  // Pastikan hanya menghitung jika ada absensi masuk
-                  if (!is_null($absensiMasuk)) {
-                      $diffMasuk = $jamMasuk->diffInMinutes($absensiMasuk, false);
-
-                      if ($diffMasuk > 0) { // Hanya jika terlambat
-                          if ($diffMasuk >= 45) {
-                              $percentage -= 75;
-                          } elseif ($diffMasuk >= 30) {
-                              $percentage -= 50;
-                          } elseif ($diffMasuk >= 15) {
-                              $percentage -= 25;
-                          }
-                      }
-                  }
-
-                  // Pastikan hanya menghitung jika ada absensi pulang
-                  if (!is_null($absensiPulang)) {
-                      $diffPulang = $jamPulang->diffInMinutes($absensiPulang, false);
-
-                      if ($diffPulang < 0) { // Hanya jika pulang lebih awal
-                          $diffPulang = abs($diffPulang);
-                          if ($diffPulang >= 45) {
-                              $percentage -= 75;
-                          } elseif ($diffPulang >= 30) {
-                              $percentage -= 50;
-                          } elseif ($diffPulang >= 15) {
-                              $percentage -= 25;
-                          }
-                      }
-                  }
-
-                  // Pastikan nilai tidak negatif
-                  $percentage = max($percentage, 0);
-
-                  // Hitung reward transport berdasarkan persentase kehadiran
-                  $transportReward = $transportAmount * ($percentage / 100);
-
-
+            $percentage = 100; // Mulai dari 100%, nanti dikurangi sesuai keterlambatan
+            $diffMasuk = 0;
+            $diffPulang = 0;
+    
+            // Konversi waktu ke Carbon
+            $jamMasuk = Carbon::parse($reward->standar_masuk);
+            $jamPulang = Carbon::parse($reward->standar_pulang);
+            $absensiMasuk = $reward->jam_masuk ? Carbon::parse($reward->jam_masuk) : null;
+            $absensiPulang = $reward->jam_pulang ? Carbon::parse($reward->jam_pulang) : null;
+    
+            // Hitung keterlambatan masuk
+            if (!is_null($absensiMasuk) && $absensiMasuk->greaterThan($jamMasuk)) {
+                $diffMasuk = $absensiMasuk->diffInMinutes($jamMasuk);
+                if ($diffMasuk >= 45) {
+                    $percentage -= 75;
+                } elseif ($diffMasuk >= 30) {
+                    $percentage -= 50;
+                } elseif ($diffMasuk >= 15) {
+                    $percentage -= 25;
+                }
             }
-
+    
+            // Hitung keterlambatan pulang (pulang lebih awal)
+            if (!is_null($absensiPulang) && $absensiPulang->lessThan($jamPulang)) {
+                $diffPulang = $jamPulang->diffInMinutes($absensiPulang);
+                if ($diffPulang >= 45) {
+                    $percentage -= 75;
+                } elseif ($diffPulang >= 30) {
+                    $percentage -= 50;
+                } elseif ($diffPulang >= 15) {
+                    $percentage -= 25;
+                }
+            }
+    
+            // Pastikan persentase minimal 0%
+            $percentage = max($percentage, 0);
+    
+            // Hitung reward transport berdasarkan persentase kehadiran
+            $transportReward = $transportAmount * ($percentage / 100);
+    
             $rewardData[] = [
                 'reward' => $reward,
                 'diffMasuk' => $diffMasuk,
                 'diffPulang' => $diffPulang,
                 'transportReward' => $transportReward,
-                'shift_note' => $schedules->shift_note,
                 'percentage' => $percentage,
             ];
         }
-
+    
         // Kirim data ke view
-        return view('reward.index', compact('rewardData', 'schedules', 'transportAmount', 'percentage'));
+        return view('reward.index', compact('rewardData', 'transportAmount', 'percentage'));
     }
+    
+
 
     public function rewardUser(Request $request)
-{
-    $user = Auth::user(); // Ambil user yang sedang login
+    {
+        $user = Auth::user(); // Ambil user yang sedang login
 
-    // Query dasar hanya untuk user yang sedang login
-    $query = DB::table('absensis')
+        // Query dasar untuk data absensi
+        $query = DB::table('absensis')
         ->join('users', 'absensis.guru_id', '=', 'users.id')
+        ->join('jadwal_gurus', 'absensis.id_jadwal', '=', 'jadwal_gurus.id_jadwal')
         ->select(
             'users.name as nama_guru',
             'users.id as id_user',
             'users.id_guru as id_guru',
             'users.program_studi as mapel',
+            DB::raw('MAX(jadwal_gurus.jam_masuk) as standar_masuk'),
+            DB::raw('MAX(jadwal_gurus.jam_pulang) as standar_pulang'),
             DB::raw('MAX(absensis.tgl_absen) as tgl_absen'),
             DB::raw('MAX(CASE WHEN absensis.status = "Masuk" THEN absensis.jam_absen END) as jam_masuk'),
-            DB::raw('MAX(CASE WHEN absensis.status = "Pulang" THEN absensis.jam_absen END) as jam_pulang')
+            DB::raw('MAX(absensis.keterlambatan) as keterlambatan'),
+            DB::raw('MAX(CASE WHEN absensis.status = "pulang" THEN absensis.jam_absen END) as jam_pulang')
         )
-        ->where('users.id', $user->id) // Filter hanya user yang login
+        ->where('users.id', $user->id) // Filter berdasarkan ID user yang sedang login
         ->groupBy('users.id_guru', 'users.name', 'users.id', 'users.program_studi');
-
-    // Filter berdasarkan tanggal absen jika ada
-    if ($request->has('from_date') && $request->has('until_date')) {
-        $fromDate = $request->input('from_date');
-        $untilDate = $request->input('until_date');
-        $query->whereBetween('absensis.tgl_absen', [$fromDate, $untilDate]);
-    }
-
-    // Ambil data absensi guru yang login
-    $rewards = $query->get();
-
-    // Jika tidak ada data, kembalikan dengan pesan error
-    if ($rewards->isEmpty()) {
-        return back()->with('error', 'Data absensi tidak ditemukan.');
-    }
-
-    // Ambil jadwal shift berdasarkan ID Guru yang login
-    $schedules = DB::table('shift_schedules')
-        ->leftJoin('users', 'shift_schedules.id_guru', '=', 'users.id_guru')
-        ->leftJoin('shift_codes', 'shift_schedules.shift_code', '=', 'shift_codes.id')
-        ->select(
-            'shift_schedules.*',
-            'users.name as nama_guru',
-            'shift_codes.note as shift_note',
-            'shift_codes.jam_masuk',
-            'shift_codes.jam_pulang'
-        )
-        ->where('users.id', $user->id) // Filter hanya untuk user yang login
-        ->first();
-
-    // Jika tidak ada jadwal shift, kirim pesan error
-    if (!$schedules) {
-        return back()->with('error', 'Jadwal shift tidak ditemukan.');
-    }
-
-    $amountTransport = TunjTranspost::where('id', 1)->value('amount');      
-
-    // Jika tunjangan transport tidak ditemukan
-    if (!$amountTransport) {
-        return back()->with('error', 'Data tunjangan transport tidak ditemukan.');
-    }
-
-    $transportAmount = $amountTransport; // Uang transport tetap
-    $rewardData = [];
-
-    foreach ($rewards as $reward) {
-        $diffMasuk = null;
-        $diffPulang = null;
-        $transportReward = 0;
-        $percentage = 100; // Default reward
-
-        if ($schedules) {
-            $jamMasuk = Carbon::parse($schedules->jam_masuk);
-            $jamPulang = Carbon::parse($schedules->jam_pulang);
-
+    
+    
+        // Filter berdasarkan tanggal absen jika ada
+        if ($request->has('from_date') && $request->has('until_date')) {
+            $fromDate = $request->input('from_date');
+            $untilDate = $request->input('until_date');
+            $query->whereBetween('absensis.tgl_absen', [$fromDate, $untilDate]);
+        }
+    
+        // Ambil jumlah uang transport
+        $amountTransport = TunjTranspost::where('id', 1)->value('amount');
+        $transportAmount = $amountTransport; 
+    
+        // Ambil data absensi guru
+        $rewards = $query->get();
+    
+        // Jika tidak ada data, kirim pesan ke view
+        if ($rewards->isEmpty()) {
+            return view('reward.index', [
+                'rewardData' => [],
+                'transportAmount' => $transportAmount,
+                'percentage' => 100,
+                'noDataMessage' => 'Belum ada data absensi untuk periode ini.'
+            ]);
+        }
+    
+        // Variabel untuk menyimpan data reward
+        $rewardData = [];
+    
+        foreach ($rewards as $reward) {
+            $percentage = 100; // Mulai dari 100%, nanti dikurangi sesuai keterlambatan
+            $diffMasuk = 0;
+            $diffPulang = 0;
+    
+            // Konversi waktu ke Carbon
+            $jamMasuk = Carbon::parse($reward->standar_masuk);
+            $jamPulang = Carbon::parse($reward->standar_pulang);
             $absensiMasuk = $reward->jam_masuk ? Carbon::parse($reward->jam_masuk) : null;
             $absensiPulang = $reward->jam_pulang ? Carbon::parse($reward->jam_pulang) : null;
-
-            if ($absensiMasuk) {
-                $diffMasuk = $jamMasuk->diffInMinutes($absensiMasuk, false);
+    
+            // Hitung keterlambatan masuk
+            if (!is_null($absensiMasuk) && $absensiMasuk->greaterThan($jamMasuk)) {
+                $diffMasuk = $absensiMasuk->diffInMinutes($jamMasuk);
+                if ($diffMasuk >= 45) {
+                    $percentage -= 75;
+                } elseif ($diffMasuk >= 30) {
+                    $percentage -= 50;
+                } elseif ($diffMasuk >= 15) {
+                    $percentage -= 25;
+                }
             }
-            if ($absensiPulang) {
-                $diffPulang = $jamPulang->diffInMinutes($absensiPulang, false);
+    
+            // Hitung keterlambatan pulang (pulang lebih awal)
+            if (!is_null($absensiPulang) && $absensiPulang->lessThan($jamPulang)) {
+                $diffPulang = $jamPulang->diffInMinutes($absensiPulang);
+                if ($diffPulang >= 45) {
+                    $percentage -= 75;
+                } elseif ($diffPulang >= 30) {
+                    $percentage -= 50;
+                } elseif ($diffPulang >= 15) {
+                    $percentage -= 25;
+                }
             }
-
-            if (abs($diffMasuk) >= 45 || abs($diffPulang) >= 45) {
-                $percentage = 25;
-            } elseif (abs($diffMasuk) >= 30 || abs($diffPulang) >= 30) {
-                $percentage = 50;
-            } elseif (abs($diffMasuk) >= 15 || abs($diffPulang) >= 15) {
-                $percentage = 75;
-            }
-
+    
+            // Pastikan persentase minimal 0%
+            $percentage = max($percentage, 0);
+    
+            // Hitung reward transport berdasarkan persentase kehadiran
             $transportReward = $transportAmount * ($percentage / 100);
+    
+            $rewardData[] = [
+                'reward' => $reward,
+                'diffMasuk' => $diffMasuk,
+                'diffPulang' => $diffPulang,
+                'transportReward' => $transportReward,
+                'percentage' => $percentage,
+            ];
         }
-
-        $rewardData[] = [
-            'reward' => $reward,
-            'diffMasuk' => $diffMasuk,
-            'diffPulang' => $diffPulang,
-            'transportReward' => $transportReward,
-            'shift_note' => $schedules->shift_note,
-            'percentage' => $percentage,
-        ];
+     
+        return view('reward.user', compact('rewardData', 'transportAmount', 'percentage'));
     }
 
-    return view('reward.user', compact('rewardData', 'schedules', 'transportAmount', 'percentage'));
-}
-   
 
 
     /**
@@ -432,13 +399,13 @@ class AbsensiController extends Controller
     }
 
 
-	 public function store(Request $request)
+    public function store(Request $request)
     {
-       
-       
+
+
         // Ambil titik koordinat dari database
         $tikorSekolah = LocationAttendance::where('id', 1)->first();
-       
+
 
         $request->merge([
             'jam_absen' => str_replace('.', ':', $request->jam_absen),
@@ -447,6 +414,32 @@ class AbsensiController extends Controller
         if (!$tikorSekolah) {
             return redirect()->back()->with('error', 'Data lokasi sekolah tidak ditemukan.');
         }
+
+        $hariAbsen = Carbon::parse($request->tgl_absen)->format('l'); // Mendapatkan nama hari dalam bahasa Inggris
+        $hariMapping = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu',
+        ];
+
+        $hariDalamBahasa = $hariMapping[$hariAbsen] ?? $hariAbsen;
+        $JadwalGuru = DB::table('jadwal_gurus')
+            ->where('hari', $hariDalamBahasa)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$JadwalGuru) {
+            return redirect()->back()->with('error', 'Jadwal tidak ditemukan.');
+        }
+
+        $StandarJamMasuk = $JadwalGuru->jam_masuk;
+        $StandarJamPulang = $JadwalGuru->jam_pulang;
+        $idJadwal = $JadwalGuru->id_jadwal;
+
 
         $latitudeTikor = $tikorSekolah->latitude;
         $longitudeTikor = $tikorSekolah->longitude;
@@ -463,7 +456,7 @@ class AbsensiController extends Controller
             'jam_absen' => 'required|date_format:H:i:s', // Jam absen harus valid (HH:MM:SS)
             'description' => 'required|string',
 
-        ]);       
+        ]);
 
         // Hitung jarak dengan Haversine formula
         $latitudeUser = $request->latitude;
@@ -476,8 +469,8 @@ class AbsensiController extends Controller
             sin($dLon / 2) * sin($dLon / 2);
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
         $distance = $earthRadius * $c;
-       
-     
+
+
 
         if ($distance > $radiusTikor) {
             return redirect()->back()->with('error', 'Absensi gagal! Anda berada di luar radius lokasi absensi.');
@@ -511,7 +504,32 @@ class AbsensiController extends Controller
         $longitude = round($request->longitude, 7);
 
 
+        // Hitung keterlambatan
+        $keterlambatan = 0;
 
+        if ($request->status == 'masuk') {
+            $jamAbsen = Carbon::parse($request->jam_absen);
+            $standarJamMasuk = Carbon::parse($StandarJamMasuk);
+
+            if ($jamAbsen->greaterThan($standarJamMasuk)) {
+                // Hitung selisih keterlambatan dari jam masuk
+                $keterlambatan = $jamAbsen->diffInMinutes($standarJamMasuk);
+            } else {
+                $keterlambatan = 0; // Tidak terlambat jika tepat waktu atau lebih awal
+            }
+        } elseif ($request->status == 'pulang') {
+            $jamAbsen = Carbon::parse($request->jam_absen);
+            $standarJamPulang = Carbon::parse($StandarJamPulang);
+
+            if ($jamAbsen->lessThan($standarJamPulang)) {
+                // Hitung selisih kekurangan jam kerja
+                $keterlambatan = $standarJamPulang->diffInMinutes($jamAbsen);
+            } else {
+                $keterlambatan = 0; // Tidak ada keterlambatan jika absen setelah jam pulang
+            }
+        }
+
+        // dd('keterlambatan :', $keterlambatan, 'jamAbsen :', $jamAbsen, 'standarJamMasuk :', $standarJamMasuk);
         // Simpan data absensi
         try {
             Absensi::create([
@@ -523,12 +541,12 @@ class AbsensiController extends Controller
                 'tgl_absen' => $request->tgl_absen,
                 'jam_absen' => $request->jam_absen,
                 'lokasi_absen' => $request->description,
-
+                'id_jadwal' => $idJadwal,
+                'keterlambatan' => $keterlambatan // Simpan keterlambatan
             ]);
 
             return redirect()->route('guru.dashboard')->with('success', 'Absensi berhasil disimpan.');
         } catch (\Exception $e) {
-
             return redirect()->back()->with('error', 'Terjadi kesalahan');
         }
     }

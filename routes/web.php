@@ -234,6 +234,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/attendanceview',[AttendanceLocationController::class, 'tikorSekolah'])
         ->middleware('role:guru|admin')
         ->name('attendanceview');
+        
     Route::get('/get-server-time', function () {
         return response()->json([
             'tanggal' => Carbon::now()->format('Y-m-d'),
