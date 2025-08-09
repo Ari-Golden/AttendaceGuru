@@ -70,6 +70,14 @@ Route::middleware(['auth'])->group(function () {
         ->name('users.index')
         ->middleware('role:admin');
 
+    Route::get('/users/create', [userController::class, 'create'])
+        ->name('users.create')
+        ->middleware('role:admin');
+
+    Route::post('/users', [userController::class, 'store'])
+        ->name('users.store')
+        ->middleware('role:admin');
+
     Route::post('/users/{id}/assign-role', [UserController::class, 'assignRole'])
     ->name('users.assignRole')
     ->middleware('role:admin');

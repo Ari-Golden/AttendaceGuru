@@ -2,7 +2,10 @@
 
 @section('content')
 <div class="max-w-6xl p-6 mx-auto bg-white rounded-lg shadow-md">
-    <h2 class="mb-6 text-2xl font-bold text-gray-800">User Data</h2>
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">User Data</h2>
+        <a href="{{ route('users.create') }}" class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">Tambah User Baru</a>
+    </div>
 
     <!-- Input Pencarian -->
     <div class="mb-4">
