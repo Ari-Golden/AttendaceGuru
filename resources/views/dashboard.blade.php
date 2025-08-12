@@ -16,36 +16,20 @@
                 </select>
             </div>
             <!-- Pencarian -->
-            <div class="relative w-full md:w-1/3">
-                <input type="text" id="searchInput" placeholder="Cari data absen..."
-                    class="w-full px-3 py-1 pl-8 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                    class="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-2 top-1/2" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-            </div>
+            <form action="{{ route('dashboard') }}" method="GET" class="relative w-full md:w-1/3">
+                <input type="text" name="search" placeholder="Cari data absen..."
+                    class="w-full px-3 py-1 pl-8 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                    value="{{ request('search') }}">
+                <button type="submit" class="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-2 top-1/2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+            </form>
 
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const searchInput = document.getElementById('searchInput');
-                    const tableRows = document.querySelectorAll('tbody tr');
-
-                    searchInput.addEventListener('input', function() {
-                        const searchTerm = searchInput.value.toLowerCase();
-
-                        tableRows.forEach(row => {
-                            const rowText = row.textContent.toLowerCase();
-                            if (rowText.includes(searchTerm)) {
-                                row.style.display = '';
-                            } else {
-                                row.style.display = 'none';
-                            }
-                        });
-                    });
-                });
-            </script>
+            
         </div>
 
         <!-- Pagination -->

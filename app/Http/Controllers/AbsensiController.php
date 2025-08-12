@@ -47,9 +47,14 @@ class AbsensiController extends Controller
             $query->where('absensis.status', $request->status);
         }
 
-        // Pencarian berdasarkan nama guru
+        // Pencarian berdasarkan nama guru, status, atau lokasi
         if ($request->has('search') && !empty($request->search)) {
-            $query->where('users.name', 'like', '%' . $request->search . '%');
+            $searchTerm = '%' . $request->search . '%';
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('users.name', 'like', $searchTerm)
+                    ->orWhere('absensis.status', 'like', $searchTerm)
+                    ->orWhere('absensis.lokasi_absen', 'like', $searchTerm);
+            });
         }
 
         // Sorting
