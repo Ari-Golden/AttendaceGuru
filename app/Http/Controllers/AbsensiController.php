@@ -35,12 +35,7 @@ class AbsensiController extends Controller
              'users.program_studi as mapel',
                 'jadwal_gurus.jam_masuk', 
                 'jadwal_gurus.jam_pulang'
-
-
-            
-            ); // Pilih kolom yang diperlukan
-
-       
+            );
 
         // Filter berdasarkan status
         if ($request->has('status') && !empty($request->status) && $request->status !== 'semua') {
@@ -57,16 +52,43 @@ class AbsensiController extends Controller
             });
         }
 
+        // Filter berdasarkan rentang tanggal
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereBetween('absensis.tgl_absen', [$request->from_date, $request->to_date]);
+        }
+
         // Sorting
         if ($request->has('sort') && $request->has('direction')) {
             $query->orderBy($request->sort, $request->direction);
         }
 
+        // Clone the query for statistics
+        $statsQuery = clone $query;
+
+        // Get statistics from filtered data
+        $totalData = $statsQuery->count();
+        $totalMasuk = (clone $statsQuery)->where('absensis.status', 'masuk')->count();
+        $totalPulang = (clone $statsQuery)->where('absensis.status', 'pulang')->count();
+
+        // Get users with 'guru' role
+        $guruRoleId = DB::table('roles')->where('name', 'guru')->value('id');
+        $guruUsers = DB::table('model_has_roles')->where('role_id', $guruRoleId)->pluck('model_id');
+
+        // Get 'masuk' attendances for today for "belum absen" count
+        $todayMasukCount = DB::table('absensis')
+            ->whereIn('guru_id', $guruUsers)
+            ->where('tgl_absen', Carbon::now()->toDateString())
+            ->where('status', 'masuk')
+            ->count();
+
+        $totalKaryawan = count($guruUsers);
+        $totalBelumAbsen = $totalKaryawan - $todayMasukCount;
+
         // Paginate hasil query
         $absensi = $query->paginate(10);
 
 
-        return view('dashboard', compact('absensi'));
+        return view('dashboard', compact('absensi', 'totalData', 'totalMasuk', 'totalPulang', 'totalBelumAbsen'));
     }
 
     // app/Http/Controllers/RewardController.php
