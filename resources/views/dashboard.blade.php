@@ -59,14 +59,14 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-3 py-2 text-left text-gray-500 uppercase">No</th>
-                        <th class="px-3 py-2 text-left text-gray-500 uppercase">Nama</th>                                            
-                        <th class="px-3 py-2 text-left text-gray-500 uppercase">Status</th>
+                        <th class="px-3 py-2 text-left text-gray-500 uppercase"><a href="{{ route('dashboard', ['sort' => 'nama_guru', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">Nama</a></th>                                            
+                        <th class="px-3 py-2 text-left text-gray-500 uppercase"><a href="{{ route('dashboard', ['sort' => 'status', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">Status</a></th>
                         <th class="px-3 py-2 text-left text-gray-500 uppercase">Foto</th>
-                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">Tanggal</th>
-                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">Jam Standard Absen</th>
-                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">Jam Absen</th>
-                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">Keterlambatan</th>
-                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell">Lokasi</th>
+                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell"><a href="{{ route('dashboard', ['sort' => 'tgl_absen', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">Tanggal</a></th>
+                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell"><a href="{{ route('dashboard', ['sort' => 'jam_masuk', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">Jam Standard Absen</a></th>
+                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell"><a href="{{ route('dashboard', ['sort' => 'jam_absen', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">Jam Absen</a></th>
+                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell"><a href="{{ route('dashboard', ['sort' => 'keterlambatan', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">Keterlambatan</a></th>
+                        <th class="hidden px-3 py-2 text-left text-gray-500 uppercase md:table-cell"><a href="{{ route('dashboard', ['sort' => 'lokasi_absen', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc']) }}">Lokasi</a></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">

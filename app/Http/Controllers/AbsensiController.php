@@ -52,6 +52,11 @@ class AbsensiController extends Controller
             $query->where('users.name', 'like', '%' . $request->search . '%');
         }
 
+        // Sorting
+        if ($request->has('sort') && $request->has('direction')) {
+            $query->orderBy($request->sort, $request->direction);
+        }
+
         // Paginate hasil query
         $absensi = $query->paginate(10);
 
