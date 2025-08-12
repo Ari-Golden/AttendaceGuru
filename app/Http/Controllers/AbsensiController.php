@@ -85,7 +85,7 @@ class AbsensiController extends Controller
         $totalBelumAbsen = $totalKaryawan - $todayMasukCount;
 
         // Paginate hasil query
-        $absensi = $query->paginate(10);
+        $absensi = $query->paginate(10)->appends($request->query());
 
 
         return view('dashboard', compact('absensi', 'totalData', 'totalMasuk', 'totalPulang', 'totalBelumAbsen'));
