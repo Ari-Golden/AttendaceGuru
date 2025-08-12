@@ -357,7 +357,7 @@ class AbsensiController extends Controller
         $guruId = Auth::id();
 
         $existingAbsensi = Absensi::where('guru_id', $guruId)
-            ->where('tgl_absen', $request->tgl_absen)
+            ->where('tgl_absen', Carbon::now()->toDateString())
             ->where('status', $request->status)
             ->exists(); // Menggunakan `exists()` lebih efisien
 
@@ -399,7 +399,7 @@ class AbsensiController extends Controller
             'latitude' => $latitudeUser,
             'longitude' => $longitudeUser,
             'status' => $request->status,
-            'tgl_absen' => $request->tgl_absen,
+            'tgl_absen' => Carbon::now()->toDateString(),
             'jam_absen' => $request->jam_absen,
             'lokasi_absen' => $request->description,
             'report' => $request->report, // Bisa diisi sesuai kebutuhan
@@ -425,7 +425,7 @@ class AbsensiController extends Controller
             return redirect()->back()->with('error', 'Data lokasi sekolah tidak ditemukan.');
         }
 
-        $hariAbsen = Carbon::parse($request->tgl_absen)->format('l'); // Mendapatkan nama hari dalam bahasa Inggris
+        $hariAbsen = Carbon::now()->format('l'); // Mendapatkan nama hari dalam bahasa Inggris
         $hariMapping = [
             'Monday' => 'Senin',
             'Tuesday' => 'Selasa',
@@ -488,7 +488,7 @@ class AbsensiController extends Controller
 
         // Cek apakah sudah absen hari ini
         $existingAbsensi = Absensi::where('guru_id', Auth::id())
-            ->where('tgl_absen', $request->tgl_absen)
+            ->where('tgl_absen', Carbon::now()->toDateString())
             ->where('status', $request->status)
             ->first();
 
@@ -548,7 +548,7 @@ class AbsensiController extends Controller
                 'latitude' => $latitude,
                 'longitude' => $longitude,
                 'status' => $request->status,
-                'tgl_absen' => $request->tgl_absen,
+                'tgl_absen' => Carbon::now()->toDateString(),
                 'jam_absen' => $request->jam_absen,
                 'lokasi_absen' => $request->description,
                 'id_jadwal' => $idJadwal,
