@@ -49,7 +49,7 @@
         </div>
 
         <!-- Tabel Data Absensi -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto overflow-y-auto max-h-96">
             <table class="min-w-full text-xs bg-white border border-gray-200 divide-y divide-gray-200 md:text-sm">
                 <thead class="bg-gray-50">
                     <tr>
