@@ -22,12 +22,12 @@
        </a>
 
        <!-- Card Menu Report Absen -->
-       <a href="{{ route('reward-guru') }}" class="block p-6  text-blue-500 rounded-lg  hover:text-blue-900 transition duration-300 text-center">
+       <!-- <a href="{{ route('reward-guru') }}" class="block p-6  text-blue-500 rounded-lg  hover:text-blue-900 transition duration-300 text-center">
            <div class="flex flex-col items-center">
                <i class="fas fa-chart-line text-2xl mb-4"></i>
                <span class="text-sm font-bold">Laporan Absen</span>
            </div>
-       </a>
+       </a> -->
    </div>
    <footer class="fixed bottom-0 w-full p-4 bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800">
        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <span class="font-semibold">PT. Golden National Lecacy</span> <a href="#" class="hover:underline">AttendanceGuruTM</a>. All Rights Reserved.
