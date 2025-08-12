@@ -192,6 +192,7 @@
                                     @endif
                                 </a>
                             </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -214,10 +215,13 @@
                                 <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->jam_absen }}</td>
                                 <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->keterlambatan }} Menit</td>
                                 <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->lokasi_absen }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a href="{{ route('absensi.edit', $item->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                <td colspan="10" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                     Tidak ada data yang ditemukan.
                                 </td>
                             </tr>

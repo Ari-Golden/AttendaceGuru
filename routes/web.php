@@ -25,6 +25,14 @@ Route::middleware(['auth'])->group(function () {
         ->name('dashboard')
         ->middleware('role:admin');
 
+    // Routes for Absensi editing
+    Route::get('/absensi/{absensi}/edit', [AbsensiController::class, 'edit'])
+        ->name('absensi.edit')
+        ->middleware('role:admin');
+    Route::put('/absensi/{absensi}', [AbsensiController::class, 'update'])
+        ->name('absensi.update')
+        ->middleware('role:admin');
+
     // Halaman lokasi Absen
 
 

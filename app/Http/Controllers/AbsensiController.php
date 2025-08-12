@@ -615,7 +615,7 @@ class AbsensiController extends Controller
      */
     public function edit(Absensi $absensi)
     {
-        //
+        return view('absensi.edit', compact('absensi'));
     }
 
     /**
@@ -623,7 +623,17 @@ class AbsensiController extends Controller
      */
     public function update(Request $request, Absensi $absensi)
     {
-        //
+        $request->validate([
+            'tgl_absen' => 'required|date',
+            'jam_absen' => 'required|date_format:H:i:s',
+        ]);
+
+        $absensi->update([
+            'tgl_absen' => $request->tgl_absen,
+            'jam_absen' => $request->jam_absen,
+        ]);
+
+        return redirect()->route('dashboard')->with('success', 'Data absensi berhasil diupdate.');
     }
 
     /**
