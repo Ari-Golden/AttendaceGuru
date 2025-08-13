@@ -351,8 +351,6 @@ class AbsensiController extends Controller
             'latitude' => ['required', 'numeric', 'between:-90,90'],
             'longitude' => ['required', 'numeric', 'between:-180,180'],
             'status' => 'required|in:masuk,pulang',
-            'tgl_absen' => 'required|date',
-            'jam_absen' => 'required|date_format:H:i:s',
             'description' => 'required|string',
             'report' => 'required|string',
         ]);
@@ -426,7 +424,7 @@ class AbsensiController extends Controller
             'longitude' => $longitudeUser,
             'status' => $request->status,
             'tgl_absen' => Carbon::now()->toDateString(),
-            'jam_absen' => $request->jam_absen,
+            'jam_absen' => Carbon::now()->toTimeString(),
             'lokasi_absen' => $request->description,
             'report' => $request->report, // Bisa diisi sesuai kebutuhan
         ]);
@@ -488,8 +486,6 @@ class AbsensiController extends Controller
             'latitude' => 'required|regex:/^-?\d{1,3}\.\d{1,7}$/',
             'longitude' => 'required|regex:/^-?\d{1,3}\.\d{1,7}$/',
             'status' => 'required|in:masuk,pulang', // Status harus "masuk" atau "pulang"
-            'tgl_absen' => 'required|date',    // Tanggal absen harus valid (YYYY-MM-DD)
-            'jam_absen' => 'required|date_format:H:i:s', // Jam absen harus valid (HH:MM:SS)
             'description' => 'required|string',
 
         ]);
@@ -575,7 +571,7 @@ class AbsensiController extends Controller
                 'longitude' => $longitude,
                 'status' => $request->status,
                 'tgl_absen' => Carbon::now()->toDateString(),
-                'jam_absen' => $request->jam_absen,
+                'jam_absen' => Carbon::now()->toTimeString(),
                 'lokasi_absen' => $request->description,
                 'id_jadwal' => $idJadwal,
                 'keterlambatan' => $keterlambatan // Simpan keterlambatan

@@ -78,11 +78,12 @@
 <script>
  document.addEventListener('DOMContentLoaded', function() {
     function updateRealtimeClock() {
-        const now = new Date();
-        document.getElementById('tgl_absen').value = now.toISOString().split('T')[0];
-        document.getElementById('jam_absen').value = now.toLocaleTimeString('id-ID', {
-            hour: '2-digit', minute: '2-digit', second: '2-digit'
-        });
+        fetch("{{ route('get.server.time') }}")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('tgl_absen').value = data.tanggal;
+                document.getElementById('jam_absen').value = data.jam;
+            });
     }
     setInterval(updateRealtimeClock, 1000);
     updateRealtimeClock();
