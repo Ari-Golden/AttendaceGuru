@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Attendance Guru App') }}</title>
-    <link rel="icon" href="{{ asset('images/Logo300.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/logo300.png') }}" type="image/x-icon">
 
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />

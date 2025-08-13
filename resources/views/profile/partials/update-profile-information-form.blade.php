@@ -14,7 +14,7 @@
     </form>
 
     <!-- Form untuk memperbarui profil -->
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
         @method('patch')
 
@@ -45,6 +45,16 @@
                     @endif
                 </div>
             @endif
+        </div>
+
+        <!-- Profile Picture -->
+        <div>
+            <x-input-label for="profile_picture" :value="__('Profile Picture')" />
+            @if ($user->profile_picture)
+                <img src="{{ asset('storage/' . $user->profile_picture) }}" alt="Profile Picture" class="mt-2 rounded-full w-20 h-20 object-cover">
+            @endif
+            <input id="profile_picture" name="profile_picture" type="file" class="block w-full mt-1" />
+            <x-input-error class="mt-2" :messages="$errors->get('profile_picture')" />
         </div>
 
         <!-- ID Guru -->

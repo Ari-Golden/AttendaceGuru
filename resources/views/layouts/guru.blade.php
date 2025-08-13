@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Attendance Guru App') }}</title>
-    <link rel="icon" href="{{ asset('images/Logo300.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/logo300.png') }}" type="image/x-icon">
     {{-- ini map --}}
   
   	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />

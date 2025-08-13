@@ -25,7 +25,7 @@
     <meta name="theme-color" content="#007bff">
 
     <!-- Favicon untuk PWA -->
-    <link rel="icon" href="{{ asset('images/Logo300.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/logo300.png') }}" type="image/x-icon">
 </head>
 
 <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
@@ -38,7 +38,11 @@
                 </div>
                 <div>
                     <a href="{{ route('profile.edit') }}" class="text-white hover:text-gray-200">
-                        <i class="fas fa-user-circle text-2xl"></i>
+                        @if (Auth::user()->profile_picture)
+                        <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="Profile Picture" class="w-8 h-8 object-cover rounded-full">
+                    @else
+                        <img src="{{ asset('images/default-profile.jpg') }}" alt="Default Profile Picture" class="w-8 h-8 object-cover rounded-full">
+                    @endif
                     </a>
                 </div>
             </div>

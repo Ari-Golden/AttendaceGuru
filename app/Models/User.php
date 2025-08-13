@@ -27,6 +27,7 @@ class User extends Authenticatable
         'program_studi',
         'alamat',
         'no_whatsapp',
+        'profile_picture',
     ];
 
     /**

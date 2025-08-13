@@ -24,6 +24,11 @@
                     <x-slot name="trigger">
                         <button
                             class="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white border border-transparent rounded-md dark:text-gray-400 dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none">
+                            @if (Auth::user()->profile_picture)
+                                <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="Profile Picture" class="w-8 h-8 object-cover rounded-full mr-2">
+                            @else
+                                <img src="{{ asset('images/default-profile.jpg') }}" alt="Default Profile Picture" class="w-8 h-8 object-cover rounded-full mr-2">
+                            @endif
                             <div>{{ Auth::user()->name }}</div>
 
                             <div class="ms-1">
@@ -83,6 +88,11 @@
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
             <div class="px-4">
+                @if (Auth::user()->profile_picture)
+                    <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="Profile Picture" class="w-12 h-12 object-cover rounded-full mb-2">
+                @else
+                    <img src="{{ asset('images/default-profile.jpg') }}" alt="Default Profile Picture" class="w-12 h-12 object-cover rounded-full mb-2">
+                @endif
                 <div class="text-base font-medium text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
                 <div class="text-sm font-medium text-gray-500">{{ Auth::user()->email }}</div>
             </div>
