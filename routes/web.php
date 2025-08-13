@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GuruDashboardController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AttendanceLocationController;
 use App\Http\Controllers\JadwalGuruController;
@@ -243,10 +244,10 @@ Route::middleware('auth')->group(function () {
 
 // Halaman Dashboard Guru
 Route::middleware('auth')->group(function () {
-    Route::get('/guru', function () {
-        return view('guru.dashboardguru', ['title' => 'Dashboard Guru'], ['user' => User::find(Auth::user()->id)]);})
-        ->middleware('role:guru|admin')
-        ->name('guru.dashboard');
+
+Route::get('/guru/dashboard', [GuruDashboardController::class, 'index'])
+    ->middleware(['auth', 'verified', 'role:guru'])
+    ->name('guru.dashboard');
     Route::get('/attendanceview',[AttendanceLocationController::class, 'tikorSekolah'])
         ->middleware('role:guru|admin')
         ->name('attendanceview');
