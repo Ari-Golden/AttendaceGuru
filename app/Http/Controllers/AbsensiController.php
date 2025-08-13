@@ -112,12 +112,16 @@ class AbsensiController extends Controller
         )
         ->groupBy('users.id_guru', 'users.name', 'users.id', 'users.program_studi');
     
-    
         // Filter berdasarkan tanggal absen jika ada
         if ($request->has('from_date') && $request->has('until_date')) {
             $fromDate = $request->input('from_date');
             $untilDate = $request->input('until_date');
             $query->whereBetween('absensis.tgl_absen', [$fromDate, $untilDate]);
+        }
+
+        // Pencarian berdasarkan nama guru
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('users.name', 'like', '%' . $request->search . '%');
         }
     
         // Ambil jumlah uang transport

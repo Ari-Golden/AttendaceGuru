@@ -272,7 +272,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/reward-guru',[AbsensiController::class, 'rewardUser'])
         ->name('reward-guru')
-        ->middleware('role:guru|admin');
+        ->middleware('role:admin');
 });
 
 require __DIR__ . '/auth.php';

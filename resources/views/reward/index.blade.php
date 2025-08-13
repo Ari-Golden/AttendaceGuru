@@ -1,225 +1,150 @@
 {{-- menampilkan data reward --}}
 @extends('layouts.guru')
+
 @section('content')
-<div class="flex-auto max-w-6xl p-6 mx-auto mb-4 bg-white rounded-lg shadow-md">
-    <div class="p-4 rounded-lg shadow-md">
-        <h3 class="mb-4 text-lg font-semibold text-gray-800">Input Periode Tutup Buku</h3>
-        <div class="flex mb-4 space-x-4">
-            <div class="w-1/2">
-                <label for="from_date" class="block mb-2 text-sm font-medium text-gray-700">From Date</label>
-                <input type="date" id="from_date" name="from_date"
-                    class="block w-full p-2 border border-gray-300 rounded-md">
-            </div>
-            <div class="w-1/2">
-                <label for="until_date" class="block mb-2 text-sm font-medium text-gray-700">Until Date</label>
-                <input type="date" id="until_date" name="until_date"
-                    class="block w-full p-2 border border-gray-300 rounded-md">
-            </div>
-        </div>
+<div class="bg-gray-100 p-6 min-h-screen">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Laporan Reward Absensi Guru</h1>
 
-        <div class="mb-4">
-            <button onclick="filterByDate()"
-                class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Filter</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    function filterByDate() {
-        const fromDate = document.getElementById('from_date').value;
-        const untilDate = document.getElementById('until_date').value;
-
-        if (fromDate && untilDate) {
-            window.location.href = `?from_date=${fromDate}&until_date=${untilDate}`;
-        } else {
-            alert('Please select both dates');
-        }
-    }
-</script>
-<div class="max-w-6xl p-6 mx-auto bg-white rounded-lg shadow-md">
-    <h2 class="mb-6 text-2xl font-bold text-gray-800">Data Reward</h2>
-    @if (session('success'))
-    <div class="mb-4 text-green-600">
-        {{ session('success') }}
-    </div>
-    @endif
-    <div class="overflow-x-auto">
-        <div class="flex mb-4 space-x-4">
-            <button onclick="downloadExcel()"
-                class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600">Download Excel</button>
-            <!-- <button onclick="downloadPDF()" class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">Download
-                PDF</button> -->
-            <button class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">
-                <a href="{{ route('reportTunjanganPdf') }}">view PDF</a>
-            </button>
-        </div>
-        <script>
-            async function downloadPDF() {
-                const {
-                    jsPDF
-                } = window.jspdf;
-                const table = document.querySelector('table');
-                const rows = Array.from(table.rows);
-                let pdfContent = '';
-
-                rows.forEach(row => {
-                    const cols = Array.from(row.cells).map(cell => cell.innerText);
-                    pdfContent += cols.join(" ") + "\n";
-                });
-
-                const doc = new jsPDF();
-                doc.text(pdfContent, 10, 10);
-                doc.save('reward_data.pdf');
-            }
-        </script>
-
-        <script>
-            function downloadExcel() {
-                const table = document.querySelector('table');
-                const rows = Array.from(table.rows);
-                let csvContent = "data:text/csv;charset=utf-8,";
-
-                rows.forEach(row => {
-                    const cols = Array.from(row.cells).map(cell => cell.innerText);
-                    csvContent += cols.join(",") + "\r\n";
-                });
-
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "reward_data.csv");
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        </script>
-        <div class="mb-4">
-            <input type="text" id="searchInput" onkeyup="searchData()"
-                placeholder="Search by Nama, ID Guru, or Tanggal Absen"
-                class="block w-full p-2 border border-gray-300 rounded-md">
-        </div>
-
-        <script>
-            function searchData() {
-                const input = document.getElementById('searchInput').value.toLowerCase();
-                const table = document.querySelector('table tbody');
-                const rows = table.getElementsByTagName('tr');
-
-                for (let i = 0; i < rows.length; i++) {
-                    const cells = rows[i].getElementsByTagName('td');
-                    let match = false;
-
-                    for (let j = 0; j < cells.length; j++) {
-                        if (cells[j].innerText.toLowerCase().includes(input)) {
-                            match = true;
-                            break;
-                        }
-                    }
-
-                    if (match) {
-                        rows[i].style.display = '';
-                    } else {
-                        rows[i].style.display = 'none';
-                    }
-                }
-            }
-        </script>
-          @if(isset($noDataMessage))
-        <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg text-center">
-            <p>{{ $noDataMessage }}</p>
-        </div>
-   		 @else
-        <table class="w-full border border-gray-200 md:table">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-4 py-2 border">ID</th>
-                    <th class="px-4 py-2 border">Nama</th>
-                    <th class="px-4 py-2 border">Tgl Absen</th>
-                    <th class="px-4 py-2 border">Masuk</th>
-                    <th class="px-4 py-2 border">Pulang</th>
-                    <th class="px-4 py-2 border">Persentase</th>
-                    <th class="px-4 py-2 border">Reward Transport</th>
-                    
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($rewardData as $data)
-                <tr class="border-t">
-                    <td class="px-4 py-2 border">{{$data['reward']->id_user }}</td>
-                    <td class="px-4 py-2 border">
-                        {{ $data['reward']->nama_guru }}  <br>
-                        <span class="text-sm font-bold text-red-600 textcenter">
-
-                            Masuk {{$data['reward']->standar_masuk ?? 'Belum tersedia' }} -
-                            Pulang {{$data['reward']->standar_pulang ?? 'Belum tersedia' }}
-                        </span>
-
-                    </td>
-                    <td class="px-4 py-2 border">{{ $data['reward']->tgl_absen }}</td>
-                    <td class="px-4 py-2 border">
-                        <div class="flex justify-center">
-                            <span class="text-sm font-bold text-center">
-                                aktual absen :{{ $data['reward']->jam_masuk }} <br>
-                                selisih keterlambatan : <br>
-                                {{ ceil($data['diffMasuk'] ?? 0) }} Menit
-                            </span>
-
-                        </div>
-                    </td>
-                    <td class="px-4 py-2 border">
-                        <div class="flex justify-center">
-                            <span class="text-sm font-bold text-center">
-                                aktual absen :{{ $data['reward']->jam_pulang }} <br>
-                                selisih keterlambatan : <br>
-                                {{ ceil($data['diffPulang'] ?? 0) }} Menit
-                            </span>
-                        </div>
-                    </td>
-                    <td class="px-4 py-2 border">{{ $data['percentage'] }}%</td>
-                    <td class="px-4 py-2 border">Rp. {{ number_format($data['transportReward'], 0, ',', '.') }}
-                    </td>
-
-                </tr>
-                @endforeach
-            </tbody>
-            <tfoot class="bg-gray-100">
-                <tr>
-                    <td colspan="6" class="px-4 py-2 font-bold text-right border">Total Reward Transport:</td>
-                    <td class="px-4 py-2 font-bold border">
-                        Rp. {{ number_format(array_sum(array_column($rewardData, 'transportReward')), 0, ',', '.') }}
-                    </td>
-                </tr>
-            </tfoot>
-
-        </table>
-      @endif
-        <!-- Tampilan Mobile -->
-        <div class="grid gap-4 md:hidden">
-            @foreach ($rewardData as $data)
-            <div class="p-4 border rounded-lg shadow-md">
-                <div class="flex items-center mb-2">
-                    <div class="w-12 h-12 mr-4 bg-gray-300 rounded-full"></div>
+        <!-- Input Periode Tutup Buku -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Filter Periode Absensi</h3>
+            <form action="{{ route('reward') }}" method="GET">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                     <div>
-                        <h3 class="text-lg font-semibold">{{ $data['reward']->nama_guru }}</h3>
-                        <p class="text-gray-600">{{ $data['reward']->nama_guru }}</p>
+                        <label for="from_date" class="block text-sm font-medium text-gray-700 mb-1">Dari Tanggal</label>
+                        <input type="date" id="from_date" name="from_date" value="{{ request('from_date') }}"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="until_date" class="block text-sm font-medium text-gray-700 mb-1">Sampai Tanggal</label>
+                        <input type="date" id="until_date" name="until_date" value="{{ request('until_date') }}"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <button type="submit"
+                            class="w-full px-4 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Filter Data
+                        </button>
                     </div>
                 </div>
-                <div class="flex justify-end">
-                    <a href="#"
-                        class="text-blue-600 hover:text-blue-800">Edit</a>
-                    |
-                    <form action="" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-600 hover:text-red-800">Hapus</button>
-                    </form>
+            </form>
+        </div>
+
+        <!-- Data Reward -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Data Reward Absensi</h2>
+
+            @if (session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <strong class="font-bold">Success!</strong>
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+            @endif
+
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex space-x-2">
+                    <a href="{{ route('reportTunjanganExcel', request()->query()) }}"
+                        class="px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600 flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Download Excel
+                    </a>
+                    <a href="{{ route('reportTunjanganPdf', request()->query()) }}" target="_blank"
+                        class="px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-600 flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2H5a2 2 0 00-2 2v2m14 0h-2"></path></svg>
+                        View PDF
+                    </a>
+                </div>
+                <div class="relative w-1/3">
+                    <input type="text" name="search" placeholder="Cari nama guru..." value="{{ request('search') }}"
+                        class="w-full px-3 py-2 pl-10 text-sm border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
                 </div>
             </div>
-            @endforeach
+
+            @if(isset($noDataMessage))
+            <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg text-center mb-4">
+                <p>{{ $noDataMessage }}</p>
+            </div>
+            @else
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Guru</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Absen Terakhir</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jam Masuk (Aktual/Standar)</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jam Pulang (Aktual/Standar)</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Persentase Kehadiran</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reward Transport</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach ($rewardData as $data)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data['reward']->id_user }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {{ $data['reward']->nama_guru }} <br>
+                                <span class="text-xs text-gray-500">({{ $data['reward']->mapel }})</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ \Carbon\Carbon::parse($data['reward']->tgl_absen)->translatedFormat('d F Y') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                Aktual: {{ $data['reward']->jam_masuk ?? 'N/A' }} <br>
+                                Standar: {{ $data['reward']->standar_masuk ?? 'N/A' }} <br>
+                                <span class="text-xs text-red-500">Terlambat: {{ ceil($data['diffMasuk'] ?? 0) }} Menit</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                Aktual: {{ $data['reward']->jam_pulang ?? 'N/A' }} <br>
+                                Standar: {{ $data['reward']->standar_pulang ?? 'N/A' }} <br>
+                                <span class="text-xs text-red-500">Pulang Cepat: {{ ceil($data['diffPulang'] ?? 0) }} Menit</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $data['percentage'] }}%</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+                                Rp. {{ number_format($data['transportReward'], 0, ',', '.') }}
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot class="bg-gray-50">
+                        <tr>
+                            <td colspan="6" class="px-6 py-3 text-right text-sm font-bold text-gray-700 uppercase">Total Reward Transport Keseluruhan:</td>
+                            <td class="px-6 py-3 whitespace-nowrap text-sm font-bold text-gray-900">
+                                Rp. {{ number_format(array_sum(array_column($rewardData, 'transportReward')), 0, ',', '.') }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            @endif
+
+            <!-- Tampilan Mobile (Optional: can be refined further) -->
+            <div class="grid gap-4 md:hidden mt-6">
+                @forelse ($rewardData as $data)
+                <div class="bg-white p-4 border border-gray-200 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ $data['reward']->nama_guru }}</h3>
+                    <p class="text-sm text-gray-600 mb-1">ID: {{ $data['reward']->id_user }}</p>
+                    <p class="text-sm text-gray-600 mb-1">Tanggal Absen: {{ \Carbon\Carbon::parse($data['reward']->tgl_absen)->translatedFormat('d F Y') }}</p>
+                    <p class="text-sm text-gray-600 mb-1">Jam Masuk: {{ $data['reward']->jam_masuk ?? 'N/A' }} (Standar: {{ $data['reward']->standar_masuk ?? 'N/A' }})</p>
+                    <p class="text-sm text-gray-600 mb-1">Jam Pulang: {{ $data['reward']->jam_pulang ?? 'N/A' }} (Standar: {{ $data['reward']->standar_pulang ?? 'N/A' }})</p>
+                    <p class="text-sm text-gray-600 mb-1">Persentase: {{ $data['percentage'] }}%</p>
+                    <p class="text-sm font-bold text-gray-800">Reward: Rp. {{ number_format($data['transportReward'], 0, ',', '.') }}</p>
+                </div>
+                @empty
+                <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg text-center">
+                    <p>Tidak ada data reward yang ditemukan untuk periode ini.</p>
+                </div>
+                @endforelse
+            </div>
         </div>
-    </div>
-    <div class="mt-6">
-        <!-- <a href="" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Generate to payroll</a> -->
     </div>
 </div>
 @endsection
