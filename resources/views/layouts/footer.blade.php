@@ -13,7 +13,7 @@
     </div>
     <div class="fixed bottom-0 left-0 right-0 bg-blue-800 md:hidden">
         <div class="flex justify-around py-2">
-            <a href="/dashboard" class="flex flex-col items-center text-gray-400 hover:text-white">
+            <a href="/guru" class="flex flex-col items-center text-gray-400 hover:text-white">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
