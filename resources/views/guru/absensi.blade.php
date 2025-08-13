@@ -15,7 +15,7 @@
     </div>
     @endif
 
-    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
+    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 max-w-md mx-auto">
         <form method="POST" action="{{ route('attendance.store') }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
 
@@ -59,9 +59,9 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ambil Foto Selfie</label>
                 <div class="mt-1 flex justify-center">
-                    <video id="video" class="w-full border rounded-md transform scale-x-[-1]" autoplay></video>
+                    <video id="video" class="w-full h-auto border rounded-md transform scale-x-[-1]" autoplay></video>
                     <canvas id="canvas" class="hidden"></canvas>
-                    <img id="photoPreview" class="hidden w-full mt-2 border rounded-md" />
+                    <img id="photoPreview" class="hidden w-full h-auto mt-2 border rounded-md" />
                 </div>
                 <input type="hidden" id="foto_selfie" name="foto_selfie">
                 <button type="button" id="capture" class="mt-2 w-full px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Ambil Foto</button>

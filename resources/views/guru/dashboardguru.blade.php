@@ -9,17 +9,19 @@
                     <p class="text-gray-600 dark:text-gray-400">Selamat datang di dasbor guru Anda.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Absensi Hari Ini</h2>
-                        <p class="text-gray-600 dark:text-gray-400">Lihat dan kelola absensi harian Anda.</p>
-                        <a href="{{ route('attendanceview') }}" class="text-blue-500 hover:underline mt-2 inline-block">Lihat Detail</a>
-                    </div>
-                    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Absensi PKL</h2>
-                        <p class="text-gray-600 dark:text-gray-400">Lacak dan kelola absensi PKL.</p>
-                        <a href="{{ route('attendancePkl') }}" class="text-blue-500 hover:underline mt-2 inline-block">Lihat Detail</a>
-                    </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="{{ route('attendanceview') }}" class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 flex flex-col justify-center items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span class="mt-2 text-sm font-medium text-gray-900 dark:text-white">Absen Harian</span>
+                    </a>
+                    <a href="{{ route('attendancePkl') }}" class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 flex flex-col justify-center items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="mt-2 text-sm font-medium text-gray-900 dark:text-white">Absen PKL</span>
+                    </a>
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 mt-4">
@@ -57,7 +59,5 @@
                 </div>
             </div>
         </main>
-
-        
     </div>
 @endsection
