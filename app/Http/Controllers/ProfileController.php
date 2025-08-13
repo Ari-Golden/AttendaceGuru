@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class ProfileController extends Controller
 {
@@ -31,7 +33,26 @@ class ProfileController extends Controller
         $user->fill($request->validated());
 
         if ($request->hasFile('profile_picture')) {
-            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $image = $request->file('profile_picture');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $path = 'profile_pictures/' . $filename;
+
+            // Create an image manager with the GD driver
+            $manager = new ImageManager(new Driver());
+
+            // Read image from file
+            $img = $manager->read($image->getRealPath());
+
+            // Resize image if it's too large (optional, but good for optimization)
+            if ($img->width() > 800) {
+                $img->resize(800, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+            }
+
+            // Save the compressed image to storage
+            $img->save(storage_path('app/public/' . $path), 75); // 75% quality
+
             $user->profile_picture = $path;
         }
 

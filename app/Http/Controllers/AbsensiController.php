@@ -12,6 +12,8 @@ use Illuminate\Container\Attributes\Storage;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage as FacadesStorage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class AbsensiController extends Controller
 {
@@ -398,8 +400,8 @@ class AbsensiController extends Controller
 
         // Pastikan gambar dalam format Base64 yang valid
         if (preg_match('/^data:image\/(\w+);base64,/', $image, $matches)) {
-            $image = substr($image, strpos($image, ',') + 1);
-            $image = str_replace(' ', '+', $image);
+            $imageData = substr($image, strpos($image, ',') + 1);
+            $imageData = base64_decode(str_replace(' ', '+', $imageData));
             $imageFormat = strtolower($matches[1]); // Ekstensi gambar (png, jpg, dll.)
 
             // Validasi format gambar yang diizinkan
@@ -407,9 +409,22 @@ class AbsensiController extends Controller
                 return back()->with('error', 'Format foto tidak didukung! Gunakan JPG atau PNG.');
             }
 
-            // Simpan gambar dengan nama unik
+            // Buat manajer gambar dengan driver GD
+            $manager = new ImageManager(new Driver());
+
+            // Baca gambar dari data mentah
+            $img = $manager->read($imageData);
+
+            // Ubah ukuran gambar jika terlalu besar (opsional, tapi bagus untuk optimasi)
+            if ($img->width() > 800) {
+                $img->resize(800, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+            }
+
+            // Simpan gambar yang dikompresi dengan nama unik
             $imageName = 'selfie_' . time() . '.' . $imageFormat;
-            FacadesStorage::disk('public')->put('selfies/' . $imageName, base64_decode($image));
+            FacadesStorage::disk('public')->put('selfies/' . $imageName, $img->encode($imageFormat, 75)); // 75% quality
 
             $fotoSelfiePath = 'selfies/' . $imageName; // Path yang disimpan di database
         } else {
@@ -521,13 +536,39 @@ class AbsensiController extends Controller
         // Proses penyimpanan foto
         if ($request->has('foto_selfie')) {
             $image = $request->input('foto_selfie');
-            $image = str_replace('data:image/png;base64,', '', $image);
-            $image = str_replace(' ', '+', $image);
-            $imageName = 'selfie_' . time() . '.png';
 
-            FacadesStorage::disk('public')->put('selfies/' . $imageName, base64_decode($image));
+            // Pastikan gambar dalam format Base64 yang valid
+            if (preg_match('/^data:image\/(\w+);base64,/', $image, $matches)) {
+                $imageData = substr($image, strpos($image, ',') + 1);
+                $imageData = base64_decode(str_replace(' ', '+', $imageData));
+                $imageFormat = strtolower($matches[1]); // Ekstensi gambar (png, jpg, dll.)
 
-            $fotoSelfiePath = 'selfies/' . $imageName; // Simpan path di database
+                // Validasi format gambar yang diizinkan
+                if (!in_array($imageFormat, ['jpg', 'jpeg', 'png'])) {
+                    return back()->with('error', 'Format foto tidak didukung! Gunakan JPG atau PNG.');
+                }
+
+                // Buat manajer gambar dengan driver GD
+                $manager = new ImageManager(new Driver());
+
+                // Baca gambar dari data mentah
+                $img = $manager->read($imageData);
+
+                // Ubah ukuran gambar jika terlalu besar (opsional, tapi bagus untuk optimasi)
+                if ($img->width() > 800) {
+                    $img->resize(800, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                }
+
+                // Simpan gambar yang dikompresi dengan nama unik
+                $imageName = 'selfie_' . time() . '.' . $imageFormat;
+                FacadesStorage::disk('public')->put('selfies/' . $imageName, $img->encode($imageFormat, 75)); // 75% quality
+
+                $fotoSelfiePath = 'selfies/' . $imageName; // Path yang disimpan di database
+            } else {
+                return back()->with('error', 'Foto selfie tidak valid!');
+            }
         } else {
             return back()->with('error', 'Foto selfie wajib diambil!');
         }
