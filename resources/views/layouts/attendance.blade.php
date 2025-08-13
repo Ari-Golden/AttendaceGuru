@@ -35,6 +35,12 @@
                 <div class="flex items-center">
                     <img src="{{ asset('images/logo150.png') }}" alt="Logo" class="h-8 w-auto mr-2">
                     <h1 class="text-xl font-semibold">{{ $title ?? 'Aplikasi Absensi' }}</h1>
+
+                    @if (Auth::check() && Auth::user()->hasRole('admin'))
+                        <a href="{{ route('absensi.non-attending') }}" class="ml-4 px-3 py-1 bg-blue-700 hover:bg-blue-800 rounded-md text-sm">
+                            Belum Absen
+                        </a>
+                    @endif
                 </div>
                 <div>
                     <a href="{{ route('profile.edit') }}" class="text-white hover:text-gray-200">

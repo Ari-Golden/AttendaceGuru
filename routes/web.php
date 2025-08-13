@@ -34,6 +34,11 @@ Route::middleware(['auth'])->group(function () {
         ->name('absensi.update')
         ->middleware('role:admin');
 
+    // New route for non-attending users
+    Route::get('/absensi/non-attending', [AbsensiController::class, 'showNonAttendingUsers'])
+        ->name('absensi.non-attending')
+        ->middleware('role:admin');
+
     // Halaman lokasi Absen
 
 

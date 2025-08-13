@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Absensi;
 use App\Models\LocationAttendance;
 use App\Models\tunjTranspost;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -683,5 +684,26 @@ class AbsensiController extends Controller
     public function destroy(Absensi $absensi)
     {
         //
+    }
+
+    public function showNonAttendingUsers()
+    {
+        $today = Carbon::now()->toDateString();
+
+        // Get all users with 'guru' role
+        $guruUsers = User::role('guru')->get();
+
+        // Get IDs of users who have attended today (status 'masuk')
+        $attendedUserIds = Absensi::where('tgl_absen', $today)
+                                ->where('status', 'masuk')
+                                ->pluck('guru_id')
+                                ->toArray();
+
+        // Filter guru users who have not attended today
+        $nonAttendingUsers = $guruUsers->filter(function ($user) use ($attendedUserIds) {
+            return !in_array($user->id, $attendedUserIds);
+        });
+
+        return view('absensi.non-attending', compact('nonAttendingUsers'));
     }
 }
