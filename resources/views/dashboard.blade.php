@@ -107,133 +107,132 @@
         </div>
 
         <!-- Tabel Data Absensi -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <a href="{{ route('dashboard', array_merge(request()->query(), ['sort' => 'nama_guru', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center">
-                                    Nama
-                                    @if(request('sort') == 'nama_guru')
-                                        @if(request('direction') == 'asc')
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
-                                        @else
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                        @endif
-                                    @endif
-                                </a>
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <a href="{{ route('dashboard', array_merge(request()->query(), ['sort' => 'status', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center">
-                                    Status
-                                    @if(request('sort') == 'status')
-                                        @if(request('direction') == 'asc')
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
-                                        @else
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                        @endif
-                                    @endif
-                                </a>
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
-                            <th scope="col" class="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <a href="{{ route('dashboard', array_merge(request()->query(), ['sort' => 'tgl_absen', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center">
-                                    Tanggal
-                                    @if(request('sort') == 'tgl_absen')
-                                        @if(request('direction') == 'asc')
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
-                                        @else
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                        @endif
-                                    @endif
-                                </a>
-                            </th>
-                            <th scope="col" class="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <a href="{{ route('dashboard', array_merge(request()->query(), ['sort' => 'jam_masuk', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center">
-                                    Jam Standard
-                                    @if(request('sort') == 'jam_masuk')
-                                        @if(request('direction') == 'asc')
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
-                                        @else
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                        @endif
-                                    @endif
-                                </a>
-                            </th>
-                            <th scope="col" class="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <a href="{{ route('dashboard', array_merge(request()->query(), ['sort' => 'jam_absen', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center">
-                                    Jam Absen
-                                    @if(request('sort') == 'jam_absen')
-                                        @if(request('direction') == 'asc')
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
-                                        @else
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                        @endif
-                                    @endif
-                                </a>
-                            </th>
-                            <th scope="col" class="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <a href="{{ route('dashboard', array_merge(request()->query(), ['sort' => 'keterlambatan', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center">
-                                    Keterlambatan
-                                    @if(request('sort') == 'keterlambatan')
-                                        @if(request('direction') == 'asc')
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
-                                        @else
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                        @endif
-                                    @endif
-                                </a>
-                            </th>
-                            <th scope="col" class="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <a href="{{ route('dashboard', array_merge(request()->query(), ['sort' => 'lokasi_absen', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center">
-                                    Lokasi
-                                    @if(request('sort') == 'lokasi_absen')
-                                        @if(request('direction') == 'asc')
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
-                                        @else
-                                            <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                        @endif
-                                    @endif
-                                </a>
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse ($absensi as $item)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $loop->iteration }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $item->nama_guru }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $item->status === 'masuk' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ ucfirst($item->status) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <img src="{{ asset('storage/' . $item->foto_selfie) }}" alt="Foto Absen" class="w-10 h-10 rounded-full">
-                                </td>
-                                <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ \Carbon\Carbon::parse($item->tgl_absen)->translatedFormat('d F Y') }}
-                                </td>
-                                <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->jam_masuk }} - {{ $item->jam_pulang }}</td>
-                                <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->jam_absen }}</td>
-                                <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->keterlambatan }} Menit</td>
-                                <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->lokasi_absen }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href="{{ route('absensi.edit', $item->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
-                                </td>
-                            </tr>
+        <div class="flex space-x-4">
+            <div class="w-3/4">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <a href="{{ route('dashboard', array_merge(request()->query(), ['sort' => 'nama_guru', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center">
+                                            Nama
+                                            @if(request('sort') == 'nama_guru')
+                                                @if(request('direction') == 'asc')
+                                                    <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+                                                @else
+                                                    <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                                @endif
+                                            @endif
+                                        </a>
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                         <a href="{{ route('dashboard', array_merge(request()->query(), ['sort' => 'jam_masuk', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center">
+                                            Status
+                                            @if(request('sort') == 'jam_masuk')
+                                                @if(request('direction') == 'asc')
+                                                    <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+                                                @else
+                                                    <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                                @endif
+                                            @endif
+                                        </a>
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <a href="{{ route('dashboard', array_merge(request()->query(), ['sort' => 'jam_masuk', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center">
+                                            Jam Absen
+                                            @if(request('sort') == 'jam_masuk')
+                                                @if(request('direction') == 'asc')
+                                                    <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+                                                @else
+                                                    <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                                @endif
+                                            @endif
+                                        </a>
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <a href="{{ route('dashboard', array_merge(request()->query(), ['sort' => 'keterlambatan_masuk', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center">
+                                            Keterlambatan
+                                            @if(request('sort') == 'keterlambatan_masuk')
+                                                @if(request('direction') == 'asc')
+                                                    <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+                                                @else
+                                                    <svg class="h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                                @endif
+                                            @endif
+                                        </a>
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse ($absensi as $item)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" rowspan="2">{{ $loop->iteration }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" rowspan="2">{{ $item->nama_guru }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" rowspan="2">{{ \Carbon\Carbon::parse($item->tgl_absen)->translatedFormat('d F Y') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <img src="{{ asset('storage/' . $item->foto_selfie_masuk) }}" alt="Foto Masuk" class="w-10 h-10 rounded-full">
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            Masuk ({{ $item->standar_masuk }})
+                                            <br>
+                                            <span class="text-xs text-gray-400">{{ $item->lokasi_absen_masuk }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->jam_masuk }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->keterlambatan_masuk }} Menit</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            @if($item->masuk_id)
+                                                <a href="{{ route('absensi.edit', $item->masuk_id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <img src="{{ asset('storage/' . $item->foto_selfie_pulang) }}" alt="Foto Pulang" class="w-10 h-10 rounded-full">
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            Pulang ({{ $item->standar_pulang }})
+                                            <br>
+                                            <span class="text-xs text-gray-400">{{ $item->lokasi_absen_pulang }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->jam_pulang }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->keterlambatan_pulang }} Menit</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            @if($item->pulang_id)
+                                                <a href="{{ route('absensi.edit', $item->pulang_id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                            Tidak ada data yang ditemukan.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="w-1/4">
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="text-lg font-semibold mb-4">Belum Absen Hari Ini</h3>
+                    <ul>
+                        @forelse($nonAttendingUsers as $user)
+                            <li class="flex items-center justify-between py-2 border-b">
+                                <span>{{ $user->name }}</span>
+                                <a href="{{ route('jadwal-guru.create.id', ['id' => $user->id]) }}" class="text-blue-500 hover:underline">Buat Jadwal</a>
+                            </li>
                         @empty
-                            <tr>
-                                <td colspan="10" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                    Tidak ada data yang ditemukan.
-                                </td>
-                            </tr>
+                            <li>Tidak ada karyawan yang belum absen hari ini.</li>
                         @endforelse
-                    </tbody>
-                </table>
+                    </ul>
+                </div>
             </div>
         </div>
 

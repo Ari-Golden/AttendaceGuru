@@ -27,57 +27,54 @@ class AbsensiController extends Controller
 
     public function index(Request $request)
     {
-        // Query dasar menggunakan Query Builder
-        $query = DB::table('absensis') // Tabel absensi
-            ->join('users', 'absensis.guru_id', '=', 'users.id') // Join dengan tabel users
-            ->join('jadwal_gurus', 'absensis.id_jadwal', '=', 'jadwal_gurus.id_jadwal') // Join dengan tabel jadwal_gurus
-            ->select('absensis.*', 
-            'users.name as nama_guru',
-             'users.id as id_user', 
-             'users.id_guru as id_guru', 
-             'users.program_studi as mapel',
-                'jadwal_gurus.jam_masuk', 
-                'jadwal_gurus.jam_pulang'
-            );
+        $query = DB::table('absensis')
+            ->join('users', 'absensis.guru_id', '=', 'users.id')
+            ->join('jadwal_gurus', 'absensis.id_jadwal', '=', 'jadwal_gurus.id_jadwal')
+            ->select(
+                'absensis.tgl_absen',
+                'users.name as nama_guru',
+                'jadwal_gurus.jam_masuk as standar_masuk',
+                'jadwal_gurus.jam_pulang as standar_pulang',
+                DB::raw('MAX(CASE WHEN absensis.status = "masuk" THEN absensis.jam_absen END) as jam_masuk'),
+                DB::raw('MAX(CASE WHEN absensis.status = "pulang" THEN absensis.jam_absen END) as jam_pulang'),
+                DB::raw('MAX(CASE WHEN absensis.status = "masuk" THEN absensis.keterlambatan END) as keterlambatan_masuk'),
+                DB::raw('MAX(CASE WHEN absensis.status = "pulang" THEN absensis.keterlambatan END) as keterlambatan_pulang'),
+                DB::raw('MAX(CASE WHEN absensis.status = "masuk" THEN absensis.id END) as masuk_id'),
+                DB::raw('MAX(CASE WHEN absensis.status = "pulang" THEN absensis.id END) as pulang_id'),
+                DB::raw('MAX(CASE WHEN absensis.status = "masuk" THEN absensis.lokasi_absen END) as lokasi_absen_masuk'),
+                DB::raw('MAX(CASE WHEN absensis.status = "pulang" THEN absensis.lokasi_absen END) as lokasi_absen_pulang'),
+                DB::raw('MAX(CASE WHEN absensis.status = "masuk" THEN absensis.foto_selfie END) as foto_selfie_masuk'),
+                DB::raw('MAX(CASE WHEN absensis.status = "pulang" THEN absensis.foto_selfie END) as foto_selfie_pulang')
+            )
+            ->groupBy('absensis.tgl_absen', 'users.name', 'jadwal_gurus.jam_masuk', 'jadwal_gurus.jam_pulang');
 
-        // Filter berdasarkan status
-        if ($request->has('status') && !empty($request->status) && $request->status !== 'semua') {
-            $query->where('absensis.status', $request->status);
-        }
-
-        // Pencarian berdasarkan nama guru, status, atau lokasi
         if ($request->has('search') && !empty($request->search)) {
             $searchTerm = '%' . $request->search . '%';
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('users.name', 'like', $searchTerm)
-                    ->orWhere('absensis.status', 'like', $searchTerm)
-                    ->orWhere('absensis.lokasi_absen', 'like', $searchTerm);
-            });
+            $query->where('users.name', 'like', $searchTerm);
         }
 
-        // Filter berdasarkan rentang tanggal
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $query->whereBetween('absensis.tgl_absen', [$request->from_date, $request->to_date]);
         }
 
-        // Sorting
         if ($request->has('sort') && $request->has('direction')) {
             $query->orderBy($request->sort, $request->direction);
+        } else {
+            $query->orderBy('absensis.tgl_absen', 'desc')->orderBy('jam_masuk', 'desc');
         }
 
-        // Clone the query for statistics
-        $statsQuery = clone $query;
+        $statsQuery = DB::table('absensis');
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $statsQuery->whereBetween('absensis.tgl_absen', [$request->from_date, $request->to_date]);
+        }
 
-        // Get statistics from filtered data
         $totalData = $statsQuery->count();
-        $totalMasuk = (clone $statsQuery)->where('absensis.status', 'masuk')->count();
-        $totalPulang = (clone $statsQuery)->where('absensis.status', 'pulang')->count();
+        $totalMasuk = (clone $statsQuery)->where('status', 'masuk')->count();
+        $totalPulang = (clone $statsQuery)->where('status', 'pulang')->count();
 
-        // Get users with 'guru' role
         $guruRoleId = DB::table('roles')->where('name', 'guru')->value('id');
         $guruUsers = DB::table('model_has_roles')->where('role_id', $guruRoleId)->pluck('model_id');
 
-        // Get 'masuk' attendances for today for "belum absen" count
         $todayMasukCount = DB::table('absensis')
             ->whereIn('guru_id', $guruUsers)
             ->where('tgl_absen', Carbon::now()->toDateString())
@@ -87,11 +84,19 @@ class AbsensiController extends Controller
         $totalKaryawan = count($guruUsers);
         $totalBelumAbsen = $totalKaryawan - $todayMasukCount;
 
-        // Paginate hasil query
         $absensi = $query->paginate(10)->appends($request->query());
 
+        $today = Carbon::now()->toDateString();
+        $allGuruUsers = User::role('guru')->get();
+        $attendedUserIds = Absensi::where('tgl_absen', $today)
+                                ->where('status', 'masuk')
+                                ->pluck('guru_id')
+                                ->toArray();
+        $nonAttendingUsers = $allGuruUsers->filter(function ($user) use ($attendedUserIds) {
+            return !in_array($user->id, $attendedUserIds);
+        });
 
-        return view('dashboard', compact('absensi', 'totalData', 'totalMasuk', 'totalPulang', 'totalBelumAbsen'));
+        return view('dashboard', compact('absensi', 'totalData', 'totalMasuk', 'totalPulang', 'totalBelumAbsen', 'nonAttendingUsers'));
     }
 
     // app/Http/Controllers/RewardController.php
